@@ -1,0 +1,23 @@
+services:
+  sumo-rl:
+    build:
+      context: .
+      args:
+        USERNAME: ${USERNAME}
+        UID: ${UID}
+        GID: ${GID}
+        WORKDIR: ${WORKDIR}
+    cpus: 8
+    mem_limit: 16g
+    container_name: sumo-rl
+    hostname: sumo-rl
+    tty: true
+    stdin_open: true
+    environment:
+      - DISPLAY=${DISPLAY}
+      - LIBSUMO_AS_TRACI=0
+    volumes:
+      - ${PROJECT_ROOT}:${WORKDIR}
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    user: "${UID}:${GID}"
+    working_dir: ${WORKDIR}
