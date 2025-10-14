@@ -1,4 +1,4 @@
-# Team 28 Progress Report - October 15th, 2025
+# Team 24 Progress Report - October 15th, 2025
 
 ## Proposal Feedback
 Since you're using an existing environment, substantial algorithmic contributions and systematic experimentation are expected. Plan to implement and compare 3+ algorithms. Precisely define your MDP: observation, actions, episode length, reward calc, etc. Make sure to clearly articulate what's novel about your study. Ablation/generalization studies may be pertinent. Include complete MDP and specify algos and an incremental development plan in your Oct 15 progress report.
