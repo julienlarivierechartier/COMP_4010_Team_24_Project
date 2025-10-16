@@ -25,14 +25,14 @@ Since you're using an existing environment, substantial algorithmic contribution
 
 ## Algorithms Used (Minimum 3)
 
-### 1. Q-learning (Lewis)
+### 1. Q-learning 
 - A model free reinforcement learning algorithm, learns action-value function through direct interaction with the environment
 - Main advantage is ease of implementation and clear to interpret
 - Q-learning can efficiently learn adaptive control policies by discretizing traffic static like pedestrian waits and signal phases
 - It can be a baseline for comparison with more advanced algorithms such as PPO and SAC
 - The simplicity of Q-learning is suitable for us to experiment and debug in our SUMO-RL environment
 
-### 2. Proximal Policy Optimization - PPO (Victor)
+### 2. Proximal Policy Optimization - PPO 
 - Policy based RL algorithm thats learn stochastic policy directly, policy updates during learning to ensure accuracy
 - It is able to dynamically adjust traffic light timings:
   - Managing all lanes at once, left, right and straight lanes
@@ -42,7 +42,7 @@ Since you're using an existing environment, substantial algorithmic contribution
 - Can handle discrete and continuous actions, suited for a traffic light scenario
 - It's able to handle complex actions spaces and dynamically adjusts in real-time
 
-### 3. Max-Pressure Algorithm - MP (Fatih)
+### 3. Max-Pressure Algorithm - MP 
 - Max-Pressure is a deterministic and non-RL algorithm that, at each decision moment, selects the signal phase that most relieves congestion right now. It does this by comparing how many want to move (upstream demand) against how much space is available where they're going (downstream capacity), and it treats pedestrian crossings as first-class movements with their own pressure.
 - **Measure current demand:**
   - Count vehicles on each incoming lane (optionally weight by waiting time).
@@ -61,7 +61,7 @@ Since you're using an existing environment, substantial algorithmic contribution
   - If it differs from the current phase (and constraints allow), switch; otherwise extend the current phase briefly.
   - Repeat every control interval (e.g., 5s).
 
-### 4. Automatic Goal Generation Model - AGGM (Gator)
+### 4. Automatic Goal Generation Model - AGGM 
 - AGGM combines reinforcement learning with ontology-based reasoning to handle unseen situations in traffic control (emergency vehicles, congestion).
 - **Key Components:**
   - Dual Reward System:
