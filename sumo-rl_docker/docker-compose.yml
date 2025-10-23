@@ -14,10 +14,11 @@ services:
     tty: true
     stdin_open: true
     environment:
-      - DISPLAY=${DISPLAY}
-      - LIBSUMO_AS_TRACI=0
+      - DISPLAY=${DISPLAY} # For GUI support in the container
+      - SUMO_HOME=/usr/share/sumo # Where SUMO is installed
+      - LIBSUMO_AS_TRACI=0        # Set to 1 for performance boost, but no GUI
     volumes:
       - ${PROJECT_ROOT}:${WORKDIR}
-      - /tmp/.X11-unix:/tmp/.X11-unix
+      - /tmp/.X11-unix:/tmp/.X11-unix # For GUI support in the container
     user: "${UID}:${GID}"
     working_dir: ${WORKDIR}
