@@ -1,3 +1,4 @@
+# Compose script to build the sumo-rl container with X11-forwarding (for GUI)
 services:
   sumo-rl:
     build:
@@ -7,16 +8,16 @@ services:
         UID: ${UID}
         GID: ${GID}
         WORKDIR: ${WORKDIR}
-    cpus: 8
-    mem_limit: 16g
+    cpus: 8                           # Lower if too much for your PC or laptop
+    mem_limit: 16g                    # Lower if too much for your PC or laptop
     container_name: sumo-rl
     hostname: sumo-rl
     tty: true
     stdin_open: true
     environment:
-      - DISPLAY=${DISPLAY} # For GUI support in the container
-      - SUMO_HOME=/usr/share/sumo # Where SUMO is installed
-      - LIBSUMO_AS_TRACI=0        # Set to 1 for performance boost, but no GUI
+      - DISPLAY=${DISPLAY}            # For GUI support in the container
+      - SUMO_HOME=/usr/share/sumo     # Where SUMO is installed
+      - LIBSUMO_AS_TRACI=0            # Set to 1 for performance boost, but no GUI
     volumes:
       - ${PROJECT_ROOT}:${WORKDIR}
       - /tmp/.X11-unix:/tmp/.X11-unix # For GUI support in the container

@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+
+# Script to setup all linux environemnt variables and write them to .env file before 
+# building and launching the sumo-rl container with docker compose. Tested in WSL.
+
+# Halt on any error
 set -e
 
 # Set current path to the directory in which the script is
