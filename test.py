@@ -7,6 +7,10 @@ GitHub can be used.
 import gymnasium as gym
 import sumo_rl
 from time import sleep
+from custom_env import CUSTOM_ENV_ID  # This import registers the custom environment
+
+# Test environment name (as registererd in Gymnasium)
+TEST_ENV_ID = "sumo-rl-v0"
 
 # Location of files for single intersection (adapt path to your sumo-rl installation)
 SINGLE_INTERSECTION_DIR = "/opt/sumo-rl/sumo_rl/nets/single-intersection/"
@@ -15,21 +19,12 @@ SINGLE_INTERSECTION_DIR = "/opt/sumo-rl/sumo_rl/nets/single-intersection/"
 USE_GUI = True
 STEP_SLEEP_DELAY = 1.0
 
-def test_sumo_rl():
+
+def test_sumo_rl(env: gym.Env):
     """
     Function to test the SUMO-RL library with single intersection network/route
     files.
     """
-
-    # Create the custom Gym Env
-    env = gym.make(
-        "sumo-rl-v0",
-        num_seconds=200,
-        virtual_display=(1920, 1800),
-        use_gui=USE_GUI,
-        net_file=SINGLE_INTERSECTION_DIR + "single-intersection.net.xml",
-        route_file=SINGLE_INTERSECTION_DIR + "single-intersection.rou.xml",
-    )
 
     # Reset the environment, extract initial observation and information
     obs, info = env.reset()
@@ -59,14 +54,35 @@ def test_sumo_rl():
 
         # Increment step
         step_index += 1
-        
+
         # Sleep so GUI is watchable
         if USE_GUI:
             sleep(STEP_SLEEP_DELAY)
-
 
     env.close()
 
 
 if __name__ == "__main__":
-    test_sumo_rl()
+
+    # Create the default test Gym Env
+    env = gym.make(
+        TEST_ENV_ID,
+        num_seconds=200,
+        virtual_display=(1920, 1800),
+        use_gui=USE_GUI,
+        net_file=SINGLE_INTERSECTION_DIR + "single-intersection.net.xml",
+        route_file=SINGLE_INTERSECTION_DIR + "single-intersection.rou.xml",
+    )
+
+    """ # Create the custom Gym Env
+    env = gym.make(
+        CUSTOM_ENV_ID,
+        num_seconds=200,
+        virtual_display=(1920, 1800),
+        use_gui=USE_GUI,
+        net_file=SINGLE_INTERSECTION_DIR + "single-intersection.net.xml", # Comment this to test with the custom map
+        route_file=SINGLE_INTERSECTION_DIR + "single-intersection.rou.xml", # Comment this to test with the custom map
+    ) """
+
+    # Run the test on teh selected environment
+    test_sumo_rl(env)
