@@ -6,10 +6,14 @@ GitHub can be used.
 
 import gymnasium as gym
 import sumo_rl
+from time import sleep
 
 # Location of files for single intersection (adapt path to your sumo-rl installation)
 SINGLE_INTERSECTION_DIR = "/opt/sumo-rl/sumo_rl/nets/single-intersection/"
 
+# GUI parameters
+USE_GUI = True
+STEP_SLEEP_DELAY = 1.0
 
 def test_sumo_rl():
     """
@@ -21,7 +25,8 @@ def test_sumo_rl():
     env = gym.make(
         "sumo-rl-v0",
         num_seconds=200,
-        use_gui=False,
+        virtual_display=(1920, 1800),
+        use_gui=USE_GUI,
         net_file=SINGLE_INTERSECTION_DIR + "single-intersection.net.xml",
         route_file=SINGLE_INTERSECTION_DIR + "single-intersection.rou.xml",
     )
@@ -54,6 +59,11 @@ def test_sumo_rl():
 
         # Increment step
         step_index += 1
+        
+        # Sleep so GUI is watchable
+        if USE_GUI:
+            sleep(STEP_SLEEP_DELAY)
+
 
     env.close()
 
