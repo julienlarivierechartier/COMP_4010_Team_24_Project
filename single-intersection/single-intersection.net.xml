@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<net version="1.20" avoidOverlap="0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/net_file.xsd">
+
+    <location netOffset="150.00,150.00" convBoundary="0.00,0.00,300.00,300.00" origBoundary="-150.00,-150.00,150.00,150.00" projParameter="!"/>
+
+    <!-- Internal north-south -->
+    <edge id=":t_0" function="internal">
+        <lane id=":t_0_0" index="0" speed="13.90" length="14.40" width="20.0" shape="140.00,154.00 140.00,139.60"/>
+        <lane id=":t_0_1" index="1" speed="13.90" length="14.40" width="20.0" shape="160.00,154.00 160.00,139.60"/>
+    </edge>
+
+    <!-- Internal west-east -->
+    <edge id=":t_2" function="internal">
+        <lane id=":t_2_0" index="0" speed="13.90" length="14.40" width="20.0" shape="139.60,140.00 154.00,140.00"/>
+        <lane id=":t_2_1" index="1" speed="13.90" length="14.40" width="20.0" shape="139.60,160.00 154.00,160.00"/>
+    </edge>
+
+    <!-- North to intersection -->
+    <edge id="n_t" from="n" to="t" priority="-1">
+        <lane id="n_t_0" index="0" speed="13.90" length="146.00" width="20.0" shape="140.00,300.00 140.00,154.00"/>
+        <lane id="n_t_1" index="1" speed="13.90" length="146.00" width="20.0" shape="160.00,300.00 160.00,154.00"/>
+    </edge>
+
+    <!-- East from intersection -->
+    <edge id="t_e" from="t" to="e" priority="-1">
+        <lane id="t_e_0" index="0" speed="13.90" length="146.00" width="20.0" shape="154.00,140.00 300.00,140.00"/>
+        <lane id="t_e_1" index="1" speed="13.90" length="146.00" width="20.0" shape="154.00,160.00 300.00,160.00"/>
+    </edge>
+
+    <!-- South from intersection -->
+    <edge id="t_s" from="t" to="s" priority="-1">
+        <lane id="t_s_0" index="0" speed="13.90" length="139.60" width="20.0" shape="140.00,139.60 140.00,0.00"/>
+        <lane id="t_s_1" index="1" speed="13.90" length="139.60" width="20.0" shape="160.00,139.60 160.00,0.00"/>
+    </edge>
+
+    <!-- West to intersection -->
+    <edge id="w_t" from="w" to="t" priority="-1">
+        <lane id="w_t_0" index="0" speed="13.90" length="139.60" width="20.0" shape="0.00,140.00 139.60,140.00"/>
+        <lane id="w_t_1" index="1" speed="13.90" length="139.60" width="20.0" shape="0.00,160.00 139.60,160.00"/>
+    </edge>
+
+    <!-- Traffic light logic -->
+    <tlLogic id="t" type="actuated" programID="0" offset="0">
+        <phase duration="42" state="GGrr" minDur="5" maxDur="50"/>
+        <phase duration="2"  state="yyrr"/>
+        <phase duration="42" state="rrGG" minDur="5" maxDur="50"/>
+        <phase duration="2"  state="rryy"/>
+    </tlLogic>
+
+    <!-- Junction -->
+    <junction id="t" type="traffic_light" x="150.00" y="150.00"
+        incLanes="n_t_0 n_t_1 w_t_0 w_t_1"
+        intLanes=":t_0_0 :t_0_1 :t_2_0 :t_2_1"
+        shape="130.00,170.00 170.00,170.00 170.00,130.00 130.00,130.00">
+        <request index="0" response="1100" foes="1100" cont="0"/>
+        <request index="1" response="1100" foes="1100" cont="0"/>
+        <request index="2" response="0000" foes="0011" cont="0"/>
+        <request index="3" response="0000" foes="0011" cont="0"/>
+        <param key="showTrafficLightSignals" value="true"/>
+        <param key="showSignalIcons" value="true"/>
+        <param key="tlLayout" value="signals"/>
+    </junction>
+
+    <!-- End junctions -->
+    <junction id="e" type="dead_end" x="300.00" y="150.00" incLanes="t_e_0 t_e_1" intLanes="" shape="300.00,130.00 300.00,170.00"/>
+    <junction id="n" type="dead_end" x="150.00" y="300.00" incLanes="" intLanes="" shape="130.00,300.00 170.00,300.00"/>
+    <junction id="s" type="dead_end" x="150.00" y="0.00" incLanes="t_s_0 t_s_1" intLanes="" shape="130.00,0.00 170.00,0.00"/>
+    <junction id="w" type="dead_end" x="0.00" y="150.00" incLanes="" intLanes="" shape="0.00,130.00 0.00,170.00"/>
+
+    <!-- Connections -->
+    <connection from="n_t" to="t_s" fromLane="0" toLane="0" via=":t_0_0" tl="t" linkIndex="0" dir="s" state="o"/>
+    <connection from="n_t" to="t_s" fromLane="1" toLane="1" via=":t_0_1" tl="t" linkIndex="1" dir="s" state="o"/>
+    <connection from="w_t" to="t_e" fromLane="0" toLane="0" via=":t_2_0" tl="t" linkIndex="2" dir="s" state="O"/>
+    <connection from="w_t" to="t_e" fromLane="1" toLane="1" via=":t_2_1" tl="t" linkIndex="3" dir="s" state="O"/>
+
+    <connection from=":t_0" to="t_s" fromLane="0" toLane="0" dir="s" state="M"/>
+    <connection from=":t_0" to="t_s" fromLane="1" toLane="1" dir="s" state="M"/>
+    <connection from=":t_2" to="t_e" fromLane="0" toLane="0" dir="s" state="M"/>
+    <connection from=":t_2" to="t_e" fromLane="1" toLane="1" dir="s" state="M"/>
+
+</net>
