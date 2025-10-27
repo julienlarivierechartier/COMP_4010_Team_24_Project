@@ -285,7 +285,7 @@ class CustomObservationFunction(ObservationFunction):
 
 
 
-def custom_reward_fn(ts: TrafficSignal):
+def custom_reward_fn(ts: CustomTrafficSignal):
     """
     **Need to modify:** Copy/pasted from TrafficSignal._diff_waiting_time_reward(self)
     just to test that this would work.
