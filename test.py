@@ -19,7 +19,6 @@ SINGLE_INTERSECTION_DIR = "/opt/sumo-rl/sumo_rl/nets/single-intersection/"
 USE_GUI = True
 STEP_SLEEP_DELAY = 1.0
 
-
 def test_sumo_rl(env: gym.Env):
     """
     Function to test the SUMO-RL library with single intersection network/route
@@ -65,24 +64,24 @@ def test_sumo_rl(env: gym.Env):
 if __name__ == "__main__":
 
     # Create the default test Gym Env
-    env = gym.make(
+    """ env = gym.make(
         TEST_ENV_ID,
         num_seconds=200,
         virtual_display=(1920, 1800),
         use_gui=USE_GUI,
         net_file=SINGLE_INTERSECTION_DIR + "single-intersection.net.xml",
         route_file=SINGLE_INTERSECTION_DIR + "single-intersection.rou.xml",
-    )
-
-    """ # Create the custom Gym Env
-    env = gym.make(
-        CUSTOM_ENV_ID,
-        num_seconds=200,
-        virtual_display=(1920, 1800),
-        use_gui=USE_GUI,
-        net_file=SINGLE_INTERSECTION_DIR + "single-intersection.net.xml", # Comment this to test with the custom map
-        route_file=SINGLE_INTERSECTION_DIR + "single-intersection.rou.xml", # Comment this to test with the custom map
     ) """
 
+    # Create the custom Gym Env
+    env = gym.make(
+        CUSTOM_ENV_ID,
+        num_seconds=3600,
+        virtual_display=(1920, 1800),
+        use_gui=True,
+        #net_file=SINGLE_INTERSECTION_DIR + "single-intersection.net.xml", # Comment this to test with the custom map
+        #route_file=SINGLE_INTERSECTION_DIR + "single-intersection.rou.xml", # Comment this to test with the custom map
+    )
+    
     # Run the test on teh selected environment
     test_sumo_rl(env)
