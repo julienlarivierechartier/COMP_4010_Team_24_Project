@@ -10,97 +10,99 @@
 
     <!-- =======================
          VEHICLE FLOWS (CARS)
+         Note: Adjusted for realistic traffic density
          ======================= -->
 
     <!-- North to South -->
-    <flow id="car_N_S" type="car" begin="0" end="3600"
-          from="north_in" to="south_out" number="300"/>
+    <flow id="car_N_S" type="car" begin="0" end="3600" probability="0.08"
+          from="north_in" to="south_out"/>
     <!-- North to East -->
-    <flow id="car_N_E" type="car" begin="0" end="3600"
-          from="north_in" to="east_out" number="300"/>
+    <flow id="car_N_E" type="car" begin="0" end="3600" probability="0.08"
+          from="north_in" to="east_out"/>
     <!-- North to West -->
-    <flow id="car_N_W" type="car" begin="0" end="3600"
-          from="north_in" to="west_out" number="300"/>
+    <flow id="car_N_W" type="car" begin="0" end="3600" probability="0.08"
+          from="north_in" to="west_out"/>
 
     <!-- South to North -->
-    <flow id="car_S_N" type="car" begin="0" end="3600"
-          from="south_in" to="north_out" number="300"/>
+    <flow id="car_S_N" type="car" begin="0" end="3600" probability="0.08"
+          from="south_in" to="north_out"/>
     <!-- South to East -->
-    <flow id="car_S_E" type="car" begin="0" end="3600"
-          from="south_in" to="east_out" number="300"/>
+    <flow id="car_S_E" type="car" begin="0" end="3600" probability="0.08"
+          from="south_in" to="east_out"/>
     <!-- South to West -->
-    <flow id="car_S_W" type="car" begin="0" end="3600"
-          from="south_in" to="west_out" number="300"/>
+    <flow id="car_S_W" type="car" begin="0" end="3600" probability="0.08"
+          from="south_in" to="west_out"/>
 
     <!-- East to North -->
-    <flow id="car_E_N" type="car" begin="0" end="3600"
-          from="east_in" to="north_out" number="300"/>
+    <flow id="car_E_N" type="car" begin="0" end="3600" probability="0.08"
+          from="east_in" to="north_out"/>
     <!-- East to South -->
-    <flow id="car_E_S" type="car" begin="0" end="3600"
-          from="east_in" to="south_out" number="300"/>
+    <flow id="car_E_S" type="car" begin="0" end="3600" probability="0.08"
+          from="east_in" to="south_out"/>
     <!-- East to West -->
-    <flow id="car_E_W" type="car" begin="0" end="3600"
-          from="east_in" to="west_out" number="300"/>
+    <flow id="car_E_W" type="car" begin="0" end="3600" probability="0.08"
+          from="east_in" to="west_out"/>
 
     <!-- West to North -->
-    <flow id="car_W_N" type="car" begin="0" end="3600"
-          from="west_in" to="north_out" number="300"/>
+    <flow id="car_W_N" type="car" begin="0" end="3600" probability="0.08"
+          from="west_in" to="north_out"/>
     <!-- West to South -->
-    <flow id="car_W_S" type="car" begin="0" end="3600"
-          from="west_in" to="south_out" number="300"/>
+    <flow id="car_W_S" type="car" begin="0" end="3600" probability="0.08"
+          from="west_in" to="south_out"/>
     <!-- West to East -->
-    <flow id="car_W_E" type="car" begin="0" end="3600"
-          from="west_in" to="east_out" number="300"/>
+    <flow id="car_W_E" type="car" begin="0" end="3600" probability="0.08"
+          from="west_in" to="east_out"/>
     
     <!-- =======================
          PEDESTRIAN FLOWS
+         Note: Adjusted for realistic pedestrian density
          ======================= -->  
 
-    <personFlow id="ped_N_S" begin="0" end="3600" number="200">
+    <personFlow id="ped_N_S" begin="0" end="3600" probability="0.05">
         <walk from="north_in" to="south_out"/>
     </personFlow>
 
-    <personFlow id="ped_N_E" begin="0" end="3600" number="200">
+    <personFlow id="ped_N_E" begin="0" end="3600" probability="0.05">
         <walk from="north_in" to="east_out"/>
     </personFlow>
 
-    <personFlow id="ped_N_W" begin="0" end="3600" number="200">
+    <personFlow id="ped_N_W" begin="0" end="3600" probability="0.05">
         <walk from="north_in" to="west_out"/>
     </personFlow>
 
-    <personFlow id="ped_S_N" begin="0" end="3600" number="200">
+    <personFlow id="ped_S_N" begin="0" end="3600" probability="0.05">
         <walk from="south_in" to="north_out"/>
     </personFlow>
 
-    <personFlow id="ped_S_E" begin="0" end="3600" number="200">
+    <personFlow id="ped_S_E" begin="0" end="3600" probability="0.05">
         <walk from="south_in" to="east_out"/>
     </personFlow>
 
-    <personFlow id="ped_S_W" begin="0" end="3600" number="200">
+    <personFlow id="ped_S_W" begin="0" end="3600" probability="0.05">
         <walk from="south_in" to="west_out"/>
     </personFlow>
 
-    <personFlow id="ped_E_N" begin="0" end="3600" number="200">
+    <personFlow id="ped_E_N" begin="0" end="3600" probability="0.05">
         <walk from="east_in" to="north_out"/>
     </personFlow>
 
-    <personFlow id="ped_E_S" begin="0" end="3600" number="200">
+    <personFlow id="ped_E_S" begin="0" end="3600" probability="0.05">
         <walk from="east_in" to="south_out"/>
     </personFlow>
 
-    <personFlow id="ped_E_W" begin="0" end="3600" number="200">
+    <personFlow id="ped_E_W" begin="0" end="3600" probability="0.05">
         <walk from="east_in" to="west_out"/>
     </personFlow>
 
-    <personFlow id="ped_W_N" begin="0" end="3600" number="200">
+    <personFlow id="ped_W_N" begin="0" end="3600" probability="0.05">
         <walk from="west_in" to="north_out"/>
     </personFlow>
 
-    <personFlow id="ped_W_S" begin="0" end="3600" number="200">
+    <personFlow id="ped_W_S" begin="0" end="3600" probability="0.05">
         <walk from="west_in" to="south_out"/>
     </personFlow>
 
-    <personFlow id="ped_W_E" begin="0" end="3600" number="200">
+    <personFlow id="ped_W_E" begin="0" end="3600" probability="0.05">
         <walk from="west_in" to="east_out"/>
     </personFlow>
 
