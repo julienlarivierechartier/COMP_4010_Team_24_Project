@@ -141,7 +141,11 @@ class CustomTrafficSignal(TrafficSignal):
 
     def get_total_pedestrian_queued(self) -> int:
         """Returns the total number of pedestrians waiting to cross."""
-        return sum(self.sumo.lane.getLastStepHaltingPersonNumber(lane) for lane in self.ped_lanes)
+        return sum(
+            1 for lane in self.ped_lanes
+            for ped_id in self.sumo.person.getIDList()
+            if self.sumo.person.getLaneID(ped_id) == lane and self.sumo.person.getSpeed(ped_id) < 0.1
+        )
 
     def get_total_queued(self) -> int:
         """Returns the total number of vehicles and pedestrians halting in the intersection."""
@@ -251,26 +255,39 @@ class CustomSumoEnvironment(SumoEnvironment):
 
 class CustomObservationFunction(ObservationFunction):
     """
-    **Need to modify:** I Copy/pasted the default ObservationFunction for traffic
-    signals just to test that it would work.
+    Custom observation function that includes both vehicles and pedestrians.
+    Includes: phase ID, min green flag, current time, vehicle queue, and pedestrian queue.
     """
 
     def __init__(self, ts: CustomTrafficSignal):
-        """Initialize default observation function."""
+        """Initialize custom observation function."""
         super().__init__(ts)
 
     def __call__(self) -> np.ndarray:
-        """Return the default observation."""
+        """Return the observation including pedestrians."""
+        # Current traffic signal phase (one-hot encoded)
         phase_id = [1 if self.ts.green_phase == i else 0 for i in range(self.ts.num_green_phases)]
+        
+        # Whether minimum green time has elapsed
         min_green = [0 if self.ts.time_since_last_phase_change < self.ts.min_green + self.ts.yellow_time else 1]
+        
+        # Current simulation time (normalized to [0,1] for 1 hour episode)
+        current_time = [self.ts.env.sim_step / 3600.0]
 
+        # Vehicle lanes: density and queue
         vehicle_density = self.ts.get_lanes_density()
         vehicle_queue = self.ts.get_lanes_queue()
 
+        # Pedestrian lanes: density and queue
         ped_density = self.ts.get_pedestrian_density()
         ped_queue = self.ts.get_pedestrian_queue()
 
-        observation = np.array(phase_id + min_green + vehicle_density + vehicle_queue + ped_density + ped_queue, dtype=np.float32)
+        observation = np.array(
+            phase_id + min_green + current_time + 
+            vehicle_density + vehicle_queue + 
+            ped_density + ped_queue, 
+            dtype=np.float32
+        )
         return observation
 
     def observation_space(self) -> spaces.Box:
@@ -278,21 +295,34 @@ class CustomObservationFunction(ObservationFunction):
         total_vehicle_lanes = len(self.ts.lanes)
         total_ped_lanes = len(self.ts.ped_lanes)
 
-        obs_len = self.ts.num_green_phases + 1 + 2 * (total_vehicle_lanes + total_ped_lanes)
+        # phase_id + min_green + current_time + 2*(vehicles) + 2*(pedestrians)
+        obs_len = self.ts.num_green_phases + 1 + 1 + 2 * (total_vehicle_lanes + total_ped_lanes)
 
         return spaces.Box(low=np.zeros(obs_len, dtype=np.float32),
-                        high=np.ones(obs_len, dtype=np.float32))
+                        high=np.ones(obs_len, dtype=np.float32) * 1000)  # Allow values > 1 for time
 
 
 
 def custom_reward_fn(ts: CustomTrafficSignal):
     """
-    **Need to modify:** Copy/pasted from TrafficSignal._diff_waiting_time_reward(self)
-    just to test that this would work.
+    Custom reward function that penalizes waiting time and queue length
+    for both vehicles and pedestrians with equal weighting.
+    
+    Returns negative reward for:
+    - Vehicle waiting time (differential)
+    - Total queue length (vehicles + pedestrians weighted equally)
     """
-    ts_wait = sum(ts.get_accumulated_waiting_time_per_lane()) / 100.0
-    reward = ts.last_ts_waiting_time - ts_wait
-    ts.last_ts_waiting_time = ts_wait
+    # Component 1: Vehicle waiting time (differential - like original)
+    vehicle_wait = sum(ts.get_accumulated_waiting_time_per_lane()) / 100.0
+    wait_penalty = ts.last_ts_waiting_time - vehicle_wait
+    ts.last_ts_waiting_time = vehicle_wait
+    
+    # Component 2: Queue length penalty (vehicles + pedestrians weighted equally)
+    total_queued = ts.get_total_queued()  # Includes both vehicles and pedestrians
+    queue_penalty = -0.01 * total_queued
+    
+    # Combined reward (equal weighting for vehicles and pedestrians)
+    reward = wait_penalty + queue_penalty
     return reward
 
 
