@@ -1,10 +1,3 @@
-"""-------------------------------------------------------------------------------------
-File: demo.py
-Description: Enhanced demo script for Oct 27 presentation. This script provides
-clearer output and statistics compared to test.py, making it better suited for
-demonstration purposes.
--------------------------------------------------------------------------------------"""
-
 import gymnasium as gym
 import sumo_rl
 import numpy as np
@@ -18,20 +11,17 @@ STEP_SLEEP_DELAY = 0  # 0 seconds for smoother animation
 PRINT_EVERY_N_STEPS = 5  # Print every 10 steps for progress updates
 
 def print_header(text):
-    """Print a formatted header."""
     print("\n" + "=" * 80)
     print(f"  {text}")
     print("=" * 80)
 
 def print_section(text):
-    """Print a formatted section."""
     print(f"\n--- {text} ---")
 
 def print_observation_details(obs, env):
-    """Print detailed breakdown of observation."""
     print_section("Observation Breakdown")
     
-    # Get the traffic signal (assuming single agent)
+    # Get the traffic signal
     ts = list(env.unwrapped.traffic_signals.values())[0]
     
     idx = 0
@@ -76,11 +66,7 @@ def print_observation_details(obs, env):
     print(f"    Avg Density: {np.mean(ped_density):.3f}")
     print(f"    Avg Queue:   {np.mean(ped_queue):.3f}")
 
-def run_demo(env: gym.Env):
-    """
-    Run the demo with enhanced statistics and clearer output.
-    """
-    
+def run_demo(env: gym.Env):  
     print_header("TRAFFIC SIGNAL CONTROL DEMO - Team 24")
     print("\nProject: Reinforcement Learning for Traffic Signal Control")
     print("Environment: Custom 4-way intersection with pedestrians")
@@ -99,7 +85,7 @@ def run_demo(env: gym.Env):
     # Reset environment
     print_section("Resetting Environment")
     obs, info = env.reset()
-    print("✓ Environment reset successfully")
+    print("Environment reset successfully")
     print(f"  Initial observation shape: {obs.shape}")
     print(f"  Initial info: {info}")
     
@@ -139,7 +125,7 @@ def run_demo(env: gym.Env):
         stats['min_reward'] = min(stats['min_reward'], reward)
         stats['max_reward'] = max(stats['max_reward'], reward)
         
-        # Print progress (less frequently)
+        # Print progress 
         if stats['steps'] % PRINT_EVERY_N_STEPS == 0:
             print(f"\nStep {stats['steps']:4d} | Action: {action} | Reward: {reward:8.3f} | "
                   f"Cumulative Reward: {stats['total_reward']:8.3f}")
@@ -195,14 +181,14 @@ if __name__ == "__main__":
     env = gym.make(
         CUSTOM_ENV_ID,
         num_seconds=DEMO_DURATION_SECONDS,
-        delta_time=5,  # Action every 5 sim seconds = smoother, more frequent updates
+        delta_time=5,  # Action every 5 sim seconds, smoother, more frequent updates
         virtual_display=(1920, 1080),
         use_gui=USE_GUI,
-        additional_sumo_cmd="--delay 100",  # SUMO GUI delay: 100ms = smooth real-time animation
+        additional_sumo_cmd="--delay 400",  
     )
-    print("✓ Environment created successfully\n")
+    print("Environment created successfully\n")
     
-    # Run the demo
+    # Run demo
     try:
         run_demo(env)
     except KeyboardInterrupt:
@@ -213,4 +199,5 @@ if __name__ == "__main__":
         import traceback
         traceback.print_exc()
         env.close()
+
 
