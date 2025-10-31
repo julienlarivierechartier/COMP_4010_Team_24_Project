@@ -4,14 +4,14 @@
 
 - ### Julien Larivière-Chartier:
     - **Last 2 weeks:**
--  Read the SUMO-RL documentation to understand how to implement the custom Gym environment to include pedestrians. Wrote the first version of “custom_env.py” (commit 0f860de):
-- Subclass TrafficSignal to include pedestrian-related properties
-- Subclass ObservationFuntion to include some pedestrian observations
-- Register a new reward function with CustomTrafficSignal.register_reward_fn() that was going to include pedestrians in rewards calculation.
-- Subclass SumoEnvironment to include initialization of CustomTrafficSignal 
-- Prepared the live demo (commit 5664dc3):  
-- Used Netedit GUI tools to draw the intersection (“.net.xml” file) that was used for the Env demo. Also created the first version of the “.rou.xml” file defining car and pedestrian flow.
-- Modified the CustomSumoEnvironment._start_simulation() function to add a stime.sleep(delay) to allow GUI initialization with pedestrians. This was needed for live demo because the original SumoEnvironment (which did not support pedestrians) crashed by accessing a GUI related variable that was not yet initialized because it took longer to initialize with pedestrians were defined in the “.rou.xml” file.
+    -  Read the SUMO-RL documentation to understand how to implement the custom Gym environment to include pedestrians. Wrote the first version of “custom_env.py” (commit 0f860de):
+        - Subclass TrafficSignal to include pedestrian-related properties.
+        - Subclass ObservationFuntion to include some pedestrian observations
+        - Register a new reward function with CustomTrafficSignal.register_reward_fn() that was going to include pedestrians in rewards calculation.
+        - Subclass SumoEnvironment to include initialization of CustomTrafficSignal 
+    - Prepared the live demo (commit 5664dc3):  
+        - Used Netedit GUI tools to draw the intersection (“.net.xml” file) that was used for the Env demo. Also created the first version of the “.rou.xml” file defining car and pedestrian flow.
+        - Modified the CustomSumoEnvironment._start_simulation() function to add a stime.sleep(delay) to allow GUI initialization with pedestrians. This was needed for live demo because the original SumoEnvironment (which did not support pedestrians) crashed by accessing a GUI related variable that was not yet initialized because it took longer to initialize with pedestrians were defined in the “.rou.xml” file.
     - **Next 2 weeks:** Design a script to run the various algorithms and collect results for analysis. Ensure that the results generation requirements are respected with the rest of the team when helping them develop the algorithms (PPO, Max Pressure, QLearning).
 
 - ### Gator Guo:
