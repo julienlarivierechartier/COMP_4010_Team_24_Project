@@ -114,6 +114,81 @@ class CustomTrafficSignal(TrafficSignal):
         self.observation_space = self.observation_fn.observation_space()
         self.action_space = spaces.Discrete(self.num_green_phases)
 
+    # Compute the list of absolute phase indices used for green actions
+    def _get_green_phase_indices(self) -> list[int]:
+        logic = self.sumo.trafficlight.getCompleteRedYellowGreenDefinition(self.id)[0]
+        g = getattr(self, "green_phases", None)
+        if g:
+            g_list = list(g)
+            if isinstance(g_list[0], int):
+                return g_list
+            # Map Phase objects to their indices by state
+            state_to_idx = {ph.state: i for i, ph in enumerate(logic.phases)}
+            idxs = [state_to_idx.get(getattr(ph, "state", None)) for ph in g_list]
+            idxs = [i for i in idxs if i is not None]
+            if idxs:
+                return idxs
+        # Fallback: detect phases with greens and no yellow
+        green_idxs = []
+        for idx, ph in enumerate(logic.phases):
+            s = ph.state
+            if any(c in "gG" for c in s) and not any(c in "yY" for c in s):
+                green_idxs.append(idx)
+        return green_idxs
+
+    # Compute instantaneous pressure for a given absolute phase index
+    def _phase_pressure(self, abs_phase_idx: int) -> float:
+        logic = self.sumo.trafficlight.getCompleteRedYellowGreenDefinition(self.id)[0]
+        state = logic.phases[abs_phase_idx].state
+        links = self.sumo.trafficlight.getControlledLinks(self.id)
+
+        pressure = 0.0
+        for i, link_list in enumerate(links):
+            if not link_list:
+                continue
+            ch = state[i]
+            if ch not in ("g", "G"):
+                continue
+            in_lane = link_list[0][0]
+            out_lane = link_list[0][1]
+
+            # Vehicles: upstream queue minus downstream queue
+            if not in_lane.startswith(":"):
+                up_q = float(self.sumo.lane.getLastStepHaltingNumber(in_lane))
+                down_q = 0.0
+                if out_lane and not out_lane.startswith(":"):
+                    down_q = float(self.sumo.lane.getLastStepHaltingNumber(out_lane))
+                pressure += (up_q - down_q)
+            else:
+                # Pedestrians: count waiting + small bonus for wait time
+                ped_ids = [pid for pid in self.sumo.person.getIDList()
+                           if self.sumo.person.getLaneID(pid) == in_lane and self.sumo.person.getSpeed(pid) < 0.1]
+                ped_count = float(len(ped_ids))
+                avg_wait = 0.0
+                if ped_ids:
+                    waits = [self.sumo.person.getWaitingTime(pid) for pid in ped_ids]
+                    avg_wait = float(sum(waits)) / len(waits)
+                pressure += ped_count + 0.1 * avg_wait
+
+        return pressure
+
+    # Select the green action index that maximizes pressure
+    def select_max_pressure_action(self) -> int:
+        if self.is_yellow:
+            return self.green_phase
+        if self.time_since_last_phase_change < self.min_green:
+            return self.green_phase
+
+        green_idxs = self._get_green_phase_indices()
+        best_a = self.green_phase
+        best_p = -1e18
+        for a, abs_idx in enumerate(green_idxs):
+            p = self._phase_pressure(abs_idx)
+            if p > best_p:
+                best_p = p
+                best_a = a
+        return best_a
+
     def get_pedestrian_density(self) -> list[float]:
         """Returns the density [0,1] of pedestrians in incoming pedestrian lanes."""
         densities = []
