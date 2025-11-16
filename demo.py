@@ -9,6 +9,7 @@ USE_GUI = True
 DEMO_DURATION_SECONDS = 300  # 300 simulation seconds
 STEP_SLEEP_DELAY = 0  # 0 seconds for smoother animation
 PRINT_EVERY_N_STEPS = 5  # Print every 10 steps for progress updates
+USE_MAX_PRESSURE = True  # Use Max-Pressure controller
 
 def print_header(text):
     print("\n" + "=" * 80)
@@ -71,7 +72,7 @@ def run_demo(env: gym.Env):
     print("\nProject: Reinforcement Learning for Traffic Signal Control")
     print("Environment: Custom 4-way intersection with pedestrians")
     print(f"Duration: {DEMO_DURATION_SECONDS} simulation seconds")
-    print("\nAgent: Random (demonstrating environment interaction)")
+    print("\nAgent: Max-Pressure" if USE_MAX_PRESSURE else "\nAgent: Random")
     
     # Display environment information
     print_section("Environment Information")
@@ -110,9 +111,15 @@ def run_demo(env: gym.Env):
     terminated = False
     truncated = False
     
+    # Get the traffic signal object
+    ts = list(env.unwrapped.traffic_signals.values())[0]
+
     while not (terminated or truncated):
-        # Choose random action
-        action = env.action_space.sample()
+        # Choose action (Max-Pressure or random)
+        if USE_MAX_PRESSURE:
+            action = ts.select_max_pressure_action()
+        else:
+            action = env.action_space.sample()
         
         # Take action
         obs, reward, terminated, truncated, info = env.step(action)
