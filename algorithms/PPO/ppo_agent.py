@@ -1,12 +1,13 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
+from pathlib import Path
 
 from .ppo_networks import ActorCritic
 from .rollout_buffer import RolloutBuffer
+from ..base import BaseAlgorithm
 
-
-class PPO:
+class PPO():
     def __init__(self, obs_dim, action_dim,
                  lr=3e-4, gamma=0.99, clip=0.2,
                  gae_lambda=0.95, K=4):
@@ -66,3 +67,47 @@ class PPO:
             self.optimizer.step()
 
         self.buffer.clear()
+
+
+class PPOAgent(BaseAlgorithm):
+    def __init__(self, env, lr=3e-4, gamma=0.99, clip=0.2, gae_lambda=0.95, K=4):
+        """
+        Wrap the PPO class to conform to BaseAlgorithm interface
+        env: Gymnasium environment
+        """
+        obs_dim = env.observation_space.shape[0]
+        action_dim = env.action_space.n
+        
+        self.env = env
+        self.ppo = PPO(obs_dim, action_dim, lr, gamma, clip, gae_lambda, K)
+
+    def reset(self):
+        # PPO doesn't have episode-specific internal state, but we could clear buffer
+        self.ppo.buffer.clear()
+
+    def select_action(self, obs):
+        # Convert obs to torch tensor if needed
+        obs_tensor = torch.tensor(obs, dtype=torch.float32)
+        action, logprob, value = self.ppo.policy.get_action(obs_tensor)
+        
+        # Store step info in buffer
+        self.ppo.buffer.states.append(obs_tensor)
+        self.ppo.buffer.actions.append(action)
+        self.ppo.buffer.logprobs.append(logprob)
+        self.ppo.buffer.values.append(value.squeeze())
+        
+        return action
+
+    def train_step(self, transition=None):
+        """
+        For PPO, training happens in batches. We can train once the buffer
+        is populated. The transition argument is optional here.
+        """
+        # Only update if we have enough transitions (or can do every step)
+        self.ppo.update()
+
+    def save(self, path: Path | str):
+        torch.save(self.ppo.policy.state_dict(), Path(path) / "ppo_model.pt")
+
+    def load(self, path: Path | str):
+        self.ppo.policy.load_state_dict(torch.load(Path(path) / "ppo_model.pt"))

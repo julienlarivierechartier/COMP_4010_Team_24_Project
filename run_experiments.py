@@ -5,7 +5,7 @@ from datetime import datetime
 import numpy as np
 
 from algorithms.base import BaseAlgorithm
-from algorithms.PPO import PPO
+from algorithms.PPO import PPOAgent
 from algorithms.q_learning import QLearningAgent
 #from algorithms.MaxPressure import MaxPressure
 
@@ -13,18 +13,18 @@ import gymnasium as gym
 from custom_env import CUSTOM_ENV_ID
 
 # Reference for the algorithms evaluated
-ALGORITHMS = {
-    "ppo": PPO,
+""" ALGORITHMS = {
+    "ppo": PPOAgent,
     #"max_pressure": MaxPressureAlgorithm,
     "q-learning": QLearningAgent,
-}
+} """
 
 ALGORITHMS = {
-    "q-learning": QLearningAgent,
+    "ppo": PPOAgent,
 }
 
 # Hyperparameter grid (each param has a list of candidate values)
-PARAM_GRID = {
+""" PARAM_GRID = {
     "ppo": {
         "lr": [3e-4],
         "gamma": [0.99],
@@ -41,15 +41,15 @@ PARAM_GRID = {
     },
     "max_pressure": {
     }
-}
+} """
 
 PARAM_GRID = {
-    "q-learning": {
-        "lr": [0.1],
+    "ppo": {
+        "lr": [3e-4],
         "gamma": [0.99],
-        "epsilon": [1.0],
-        "eps_decay": [0.995],
-        "eps_min": [0.01],
+        "clip": [0.2],
+        "gae_lambda": [0.95],
+        "K": [4],
     },
 }
 
@@ -96,7 +96,7 @@ def train_algorithm(env:gym.Env, algo: BaseAlgorithm, training_config:dict, save
         while not (done or truncated):
             action = algo.select_action(obs)
             next_obs, reward, done, truncated, _ = env.step(action)
-            print("Next obs:", next_obs)
+            #print("Next obs:", next_obs)
             algo.train_step((obs, action, reward, next_obs, done or truncated))
             obs = next_obs
             total_reward += reward
@@ -147,9 +147,6 @@ def run(
     training and eval results. This funciton essentially performs grid search.
     """
     env = gym.make(CUSTOM_ENV_ID)
-    
-    obs_shape = list(env.observation_space.shape)
-    n_actions = env.action_space.n
 
     # Create specific results directory under Results
     base_dir = Path(results_root) / get_file_date()
@@ -175,7 +172,7 @@ def run(
             save_dir.mkdir(parents=True, exist_ok=True)
 
             # Initialize algorithm with the current iteration of its hyperparameters
-            algo = algo_class(obs_shape, n_actions, **params_dict)
+            algo = algo_class(env, **params_dict)
 
             # Train and log the metrics
             train_metrics = train_algorithm(env, algo, training_config, save_dir)

@@ -6,10 +6,12 @@ from ..base import BaseAlgorithm
 
 # Q-learning agent
 class QLearningAgent(BaseAlgorithm):
-    def __init__(self, state_space, action_space, lr=0.1, gamma=0.99,
+    def __init__(self, env:gym.Env, lr=0.1, gamma=0.99,
                  epsilon=1.0, eps_decay=0.995, eps_min=0.01):
-        self.state_space = state_space
-        self.action_space = action_space
+        
+        # Extract this from the env (like the other algos)
+        self.obs_space = env.observation_space.shape[0]
+        self.action_space = env.action_space.n
 
         # learning params
         self.lr = lr
@@ -18,8 +20,8 @@ class QLearningAgent(BaseAlgorithm):
         self.eps_decay = eps_decay
         self.eps_min = eps_min
 
-        # q table
-        self.q_table = np.zeros(state_space + [action_space])
+        # q table (JLC: is this the shape we want?)
+        self.q_table = np.zeros(self.obs_space + [self.action_space])
 
     def update_q(self, state, action, reward, next_state):
         # basic Q-learning update
