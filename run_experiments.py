@@ -1,3 +1,8 @@
+"""For enhanced performance (using libsumo C++ backend), then call 
+"export LIBSUMO_AS_TRACI=1" before launching this script.
+ """
+
+
 from itertools import product
 import json
 from pathlib import Path
@@ -146,7 +151,7 @@ def run(
     train and evaluate algorithms at the TSC task. Saves the algorithm end states, 
     training and eval results. This funciton essentially performs grid search.
     """
-    env = gym.make(CUSTOM_ENV_ID)
+    env = gym.make(CUSTOM_ENV_ID, use_gui=False)
 
     # Create specific results directory under Results
     base_dir = Path(results_root) / get_file_date()

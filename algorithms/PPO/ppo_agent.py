@@ -101,10 +101,10 @@ class PPOAgent(BaseAlgorithm):
         action, logprob, value = self.ppo.policy.get_action(obs_tensor)
         
         # Store step info in buffer
-        self.ppo.buffer.states.append(obs_tensor)
+        self.ppo.buffer.states.append(obs_tensor.cpu())
         self.ppo.buffer.actions.append(action)
-        self.ppo.buffer.logprobs.append(logprob)
-        self.ppo.buffer.values.append(value.squeeze())
+        self.ppo.buffer.logprobs.append(logprob.cpu())
+        self.ppo.buffer.values.append(value.cpu().squeeze())
         
         return action
 
