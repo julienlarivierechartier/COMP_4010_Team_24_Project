@@ -1,9 +1,11 @@
 import numpy as np
 import gymnasium as gym
+from pathlib import Path
 from custom_env import CUSTOM_ENV_ID
+from base import BaseAlgorithm
 
 # Q-learning agent
-class QLearningAgent:
+class QLearningAgent(BaseAlgorithm):
     def __init__(self, state_space, action_space, lr=0.1, gamma=0.99,
                  epsilon=1.0, eps_decay=0.995, eps_min=0.01):
         self.state_space = state_space
@@ -19,13 +21,6 @@ class QLearningAgent:
         # q table
         self.q_table = np.zeros(state_space + [action_space])
 
-    def choose_action(self, state):
-        # epsilon-greedy
-        if np.random.random() < self.epsilon:
-            return np.random.randint(self.action_space)
-        else:
-            return np.argmax(self.q_table[state])
-
     def update_q(self, state, action, reward, next_state):
         # basic Q-learning update
         next_best = np.argmax(self.q_table[next_state])
@@ -36,30 +31,83 @@ class QLearningAgent:
         # decrease epsilon each episode
         self.epsilon = max(self.eps_min, self.epsilon * self.eps_decay)
 
-def train(agent, env, episodes=1000):
+    # ---------------------------
+    # BaseAlgorithm interface
+    # ---------------------------
+
+    # **Needed by BaseAlgorithm
+    def reset(self):
+        """Resets agent internal state. This is called at the start of each episode. In 
+        the case of Q-Learning, this could reset the decayed epsilon if we wanted, or it
+        could just do nothing (pass)."""
+        # self.epsilon = 1.0
+        pass
+
+    # **Needed by BaseAlgorithm
+    def select_action(self, obs:tuple):
+        """Selecting an action based on the observation tuple"""
+        # epsilon-greedy
+        if np.random.random() < self.epsilon:
+            return np.random.randint(self.action_space)
+        else:
+            return np.argmax(self.q_table[tuple(obs)])
+
+    # **Needed by BaseAlgorithm
+    def train_step(self, transition:tuple):
+        """
+        transition = (state, action, reward, next_state, done)
+        """
+        state, action, reward, next_state, done = transition
+        # Convert to tuples because Q-table indexing expects tuples
+        self.update_q(tuple(state), action, reward, tuple(next_state))
+        self.decay()
+
+    # **Needed by BaseAlgorithm
+    def save(self, path:Path|str):
+        """Save Q-table and parameters."""
+        np.savez(
+            Path(path),
+            q_table=self.q_table,
+            epsilon=self.epsilon,
+            lr=self.lr,
+            gamma=self.gamma
+        )
+
+    # **Needed by BaseAlgorithm
+    def load(self, path:Path|str):
+        """Load Q-table and parameters."""
+        data = np.load(Path(path))
+        self.q_table = data["q_table"]
+        self.epsilon = float(data["epsilon"])
+        self.lr = float(data["lr"])
+        self.gamma = float(data["gamma"])
+
+# ------------------------------------
+# Testing the training independently
+# ------------------------------------
+
+def train(agent: BaseAlgorithm, env: gym.Env, episodes=1000):
+    """Rewrote to use the BaseAlgorithm implementation."""
     for ep in range(episodes):
-        state, _ = env.reset()
-        state = tuple(state)  # the env gives array so convert it
+        obs, _ = env.reset()
+        agent.reset()
 
         done = False
         total_reward = 0
 
         while not done:
-            action = agent.choose_action(state)
-            next_state, reward, terminated, truncated, _ = env.step(action)
-            next_state = tuple(next_state)
+            action = agent.select_action(obs)
+            next_obs, reward, terminated, truncated, _ = env.step(action)
 
-            agent.update_q(state, action, reward, next_state)
 
-            state = next_state
+            agent.train_step((obs, action, reward, next_obs, terminated or truncated))
+
+            obs = next_obs
             total_reward += reward
 
-            if terminated or truncated:
-                done = True
-        agent.decay()
+            done = terminated or truncated
 
-        # Just print reward to see if training improves
-        print("Episode:", ep + 1, "Reward:", total_reward)
+        print(f"Episode: {ep+1} Reward: {total_reward}")
 
 if __name__ == "__main__":
     env = gym.make(CUSTOM_ENV_ID)

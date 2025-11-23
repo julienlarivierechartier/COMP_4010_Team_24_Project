@@ -19,21 +19,21 @@ ALGORITHMS = {
     "q-learning": QLearningAgent,
 }
 
-# Hyperparameter grid
+# Hyperparameter grid (each param has a list of candidate values)
 PARAM_GRID = {
     "ppo": {
-        "lr": 3e-4,
-        "gamma": 0.99,
-        "clip": 0.2,
-        "gae_lambda": 0.95,
-        "K": 4,
+        "lr": [3e-4],
+        "gamma": [0.99],
+        "clip": [0.2],
+        "gae_lambda": [0.95],
+        "K": [4],
     },
     "q-learning": {
-        "lr": 0.1,
-        "gamma": 0.99,
-        "epsilon": 1.0,
-        "eps_decay": 0.995,
-        "eps_min": 0.01,
+        "lr": [0.1],
+        "gamma": [0.99],
+        "epsilon": [1.0],
+        "eps_decay": [0.995],
+        "eps_min": [0.01],
     },
     "max_pressure": {
     }
@@ -41,7 +41,7 @@ PARAM_GRID = {
 
 # Training parameters
 TRAINING_CONFIG = {
-    "train_steps": 500000,
+    "train_episodes": 500000,
     "log_interval": 1000,
     "eval_episodes": 10
 }
@@ -53,28 +53,37 @@ def get_file_date():
     """Function to print the date"""
     return datetime.now().strftime("%Y%m%d_%H%M%S")
 
+def save_json(data:dict, fname:Path):
+    """Utility function to save json"""
+    with open(fname, "w") as f:
+        json.dump(data, f, indent=4)
+
 def train_algorithm(env:gym.Env, algo: BaseAlgorithm, training_config:dict, save_dir: Path):
-    """Loop to train the algorithm using the trasining config dict"""
+    """Loop to train the algorithm using the training config dict"""
     results = []
     obs, _ = env.reset()
     algo.reset()
 
-    # Train the algorithm for the number of steps
-    for step in range(training_config["train_steps"]):
-        action = algo.select_action(obs)
-        next_obs, reward, done, truncated,_ = env.step(action)
+    # Train the algorithm for the number of training episodes
+    for episode in range(training_config["train_episodes"]):
+        obs, _ = env.reset()
+        algo.reset()
+        done = False
+        truncated = False
+        total_reward = 0
+        
+        while not (done or truncated):
+            action = algo.select_action(obs)
+            next_obs, reward, done, truncated, _ = env.step(action)
+            algo.train_step((obs, action, reward, next_obs, done or truncated))
+            obs = next_obs
+            total_reward += reward
 
-        algo.train_step((obs, action, reward, next_obs, done or truncated))
+        if episode % training_config.get("log_interval", 1) == 0:
+            print(f"Episode {episode+1} reward: {total_reward}")
 
-        obs = next_obs
-        if done or truncated:
-            obs, _ = env.reset()
-
-        if step % training_config["log_interval"] == 0:
-            results.append({"step": step, "reward": float(reward)})
-
-    # Save the current model state
-    algo.save(save_dir / "model.zip")
+    # Save the current algorithm state
+    algo.save(save_dir / "algo.npz")
 
     return results
 
@@ -86,6 +95,7 @@ def evaluate_algorithm(env:gym.Env, algo:BaseAlgorithm, config:dict):
     # Evaluate the algorithm for the number of episodes
     for _ in range(config["eval_episodes"]):
         obs, _ = env.reset()
+        algo.reset()
         total = 0
         done = False
         truncated = False
@@ -104,17 +114,20 @@ def evaluate_algorithm(env:gym.Env, algo:BaseAlgorithm, config:dict):
         "all_rewards": rewards
     }
 
-
 def run(
     algorithms:dict=ALGORITHMS, 
     hyperparams:dict=PARAM_GRID, 
     training_config:dict=TRAINING_CONFIG, 
     results_root:Path=RESULTS_ROOT
 ):
+    """Function to iterate over all combinations of algorithms and hyperparameters to 
+    train and evaluate algorithms at the TSC task. Saves the algorithm end states, 
+    training and eval results. This funciton essentially performs grid search.
+    """
     env = gym.make(CUSTOM_ENV_ID)
 
     # Create specific results directory under Results
-    base_dir = results_root / get_file_date()
+    base_dir = Path(results_root) / get_file_date()
     base_dir.mkdir(parents=True, exist_ok=True)
 
     for algo_name, algo_class in algorithms.items():
@@ -131,7 +144,7 @@ def run(
 
             print(f"Running {algo_name} with {params_dict}")
 
-            # Create folder: Results/timestamp/algo_lr=...
+            # Create folder: Results/timestamp/algo_lr_{k1}_{v1}_{k2}_{v2} etc..
             name = algo_name + "_" + "_".join(f"{k}_{v}" for k, v in params_dict.items())
             save_dir = base_dir / name
             save_dir.mkdir(parents=True, exist_ok=True)
@@ -144,11 +157,8 @@ def run(
             eval_metrics = evaluate_algorithm(env, algo, training_config)
 
             # Save JSON logs
-            with open(save_dir / "train.json", "w") as f:
-                json.dump(train_metrics, f, indent=4)
-
-            with open(save_dir / "eval.json", "w") as f:
-                json.dump(eval_metrics, f, indent=4)
+            save_json(train_metrics, save_dir / "train.json", "w")
+            save_json(eval_metrics, save_dir / "eval.json", "w")
 
 
 if __name__ == "__main__":

@@ -18,7 +18,8 @@ class BaseAlgorithm(ABC):
 
     @abstractmethod
     def train_step(self, transition):
-        """Single training update step from the transition"""
+        """Single training update step from the transition.
+        transition = (state, action, reward, next_state, done)"""
         pass
 
     @abstractmethod
