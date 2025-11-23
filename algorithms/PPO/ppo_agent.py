@@ -116,8 +116,12 @@ class PPOAgent(BaseAlgorithm):
         self.ppo.update()
 
     def save(self, path: Path | str):
-        torch.save(self.ppo.policy.state_dict(), Path(path) / "ppo_model.pt")
+        Path(path).parent.mkdir(parents=True, exist_ok=True)
+        torch.save(self.ppo.policy.state_dict(), path)
 
     def load(self, path: Path | str):
-        self.ppo.policy.load_state_dict(torch.load(Path(path) / "ppo_model.pt", map_location=self.device))
-        self.ppo.policy.to(self.device)
+        if Path(path).exists():
+            self.ppo.policy.load_state_dict(torch.load(path, map_location=self.device))
+            self.ppo.policy.to(self.device)
+        else:
+            print(f"Cannot load algo at path {path} because it does not exist.")

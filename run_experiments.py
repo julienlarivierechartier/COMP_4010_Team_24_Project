@@ -8,6 +8,7 @@ import json
 from pathlib import Path
 from datetime import datetime
 import numpy as np
+import time
 
 from algorithms.base import BaseAlgorithm
 from algorithms.PPO import PPOAgent
@@ -61,8 +62,8 @@ PARAM_GRID = {
 
 # Training parameters
 TRAINING_CONFIG = {
-    "train_episodes": 100,
-    "log_interval": 10,
+    "train_episodes": 50,
+    "log_interval": 1,
     "eval_episodes": 10
 }
 
@@ -84,6 +85,8 @@ def train_algorithm(env:gym.Env, algo: BaseAlgorithm, training_config:dict, save
     obs, _ = env.reset()
     algo.reset()
 
+    total_train_start = time.time()
+
     print("Observation:", obs)
     print("Type:", type(obs))
     print("Dtype:", obs.dtype if isinstance(obs, np.ndarray) else None)
@@ -92,6 +95,8 @@ def train_algorithm(env:gym.Env, algo: BaseAlgorithm, training_config:dict, save
 
     # Train the algorithm for the number of training episodes
     for episode in range(training_config["train_episodes"]):
+        episode_start = time.time()
+        
         obs, _ = env.reset()
         algo.reset()
         done = False
@@ -107,20 +112,39 @@ def train_algorithm(env:gym.Env, algo: BaseAlgorithm, training_config:dict, save
             total_reward += reward
 
         if episode % training_config.get("log_interval", 1) == 0:
-            print(f"Episode {episode+1} reward: {total_reward}")
+            print(f"Episode {episode+1} reward: {total_reward} | "
+                  f"time: {episode_time:.2f}s")
+    
+    episode_time = time.time() - episode_start
+    results.append({
+        "episode": episode + 1,
+        "reward": total_reward,
+        "duration_sec": episode_time
+    })
 
+    total_train_time = time.time() - total_train_start
+    print(f"Total training time: {total_train_time:.2f}s")
+    
     # Save the current algorithm state
-    algo.save(save_dir / "algo.npz")
+    algo.save(save_dir / "algo.checkpoint")
 
-    return results
+    return {
+        "episode_metrics": results,
+        "total_training_time_sec": total_train_time
+    }
 
 
 def evaluate_algorithm(env:gym.Env, algo:BaseAlgorithm, config:dict):
     """Function to evaluate the algorithm performance"""
     rewards = []
+    episode_times = []
+    
+    eval_start = time.time()
 
     # Evaluate the algorithm for the number of episodes
     for _ in range(config["eval_episodes"]):
+        ep_start = time.time()
+        
         obs, _ = env.reset()
         algo.reset()
         total = 0
@@ -133,12 +157,21 @@ def evaluate_algorithm(env:gym.Env, algo:BaseAlgorithm, config:dict):
             total += reward
 
         rewards.append(total)
-
+        
+        ep_time = time.time() - ep_start
+        episode_times.append(ep_time)
+        print(f"Finished episode in {ep_time} seconds")
+        
+    total_eval_time = time.time() - eval_start
+    print(f"Finished evaluation in {total_eval_time} seconds")
+    
     # Return the result metrics
     return {
         "avg_reward": float(np.mean(rewards)),
         "std_reward": float(np.std(rewards)),
-        "all_rewards": rewards
+        "all_rewards": rewards,
+        "per_episode_time_sec": episode_times,
+        "total_eval_time_sec": total_eval_time
     }
 
 def run(
