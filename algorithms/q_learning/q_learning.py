@@ -2,7 +2,7 @@ import numpy as np
 import gymnasium as gym
 from pathlib import Path
 from custom_env import CUSTOM_ENV_ID
-from base import BaseAlgorithm
+from ..base import BaseAlgorithm
 
 # Q-learning agent
 class QLearningAgent(BaseAlgorithm):
@@ -44,13 +44,13 @@ class QLearningAgent(BaseAlgorithm):
         pass
 
     # **Needed by BaseAlgorithm
-    def select_action(self, obs:tuple):
+    def select_action(self, obs):
         """Selecting an action based on the observation tuple"""
         # epsilon-greedy
         if np.random.random() < self.epsilon:
             return np.random.randint(self.action_space)
         else:
-            return np.argmax(self.q_table[tuple(obs)])
+            return np.argmax(self.q_table[obs])
 
     # **Needed by BaseAlgorithm
     def train_step(self, transition:tuple):
@@ -59,7 +59,7 @@ class QLearningAgent(BaseAlgorithm):
         """
         state, action, reward, next_state, done = transition
         # Convert to tuples because Q-table indexing expects tuples
-        self.update_q(tuple(state), action, reward, tuple(next_state))
+        self.update_q(state, action, reward, next_state)
         self.decay()
 
     # **Needed by BaseAlgorithm

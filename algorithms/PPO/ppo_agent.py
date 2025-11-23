@@ -2,8 +2,8 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 
-from algorithms.ppo_networks import ActorCritic
-from algorithms.rollout_buffer import RolloutBuffer
+from .ppo_networks import ActorCritic
+from .rollout_buffer import RolloutBuffer
 
 
 class PPO:

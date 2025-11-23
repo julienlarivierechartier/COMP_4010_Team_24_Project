@@ -19,6 +19,10 @@ ALGORITHMS = {
     "q-learning": QLearningAgent,
 }
 
+ALGORITHMS = {
+    "q-learning": QLearningAgent,
+}
+
 # Hyperparameter grid (each param has a list of candidate values)
 PARAM_GRID = {
     "ppo": {
@@ -39,10 +43,21 @@ PARAM_GRID = {
     }
 }
 
+PARAM_GRID = {
+    "q-learning": {
+        "lr": [0.1],
+        "gamma": [0.99],
+        "epsilon": [1.0],
+        "eps_decay": [0.995],
+        "eps_min": [0.01],
+    },
+}
+
+
 # Training parameters
 TRAINING_CONFIG = {
-    "train_episodes": 500000,
-    "log_interval": 1000,
+    "train_episodes": 100,
+    "log_interval": 10,
     "eval_episodes": 10
 }
 
@@ -64,6 +79,12 @@ def train_algorithm(env:gym.Env, algo: BaseAlgorithm, training_config:dict, save
     obs, _ = env.reset()
     algo.reset()
 
+    print("Observation:", obs)
+    print("Type:", type(obs))
+    print("Dtype:", obs.dtype if isinstance(obs, np.ndarray) else None)
+    print("Shape:", obs.shape)
+    print("Min/Max:", np.min(obs), np.max(obs))
+
     # Train the algorithm for the number of training episodes
     for episode in range(training_config["train_episodes"]):
         obs, _ = env.reset()
@@ -75,6 +96,7 @@ def train_algorithm(env:gym.Env, algo: BaseAlgorithm, training_config:dict, save
         while not (done or truncated):
             action = algo.select_action(obs)
             next_obs, reward, done, truncated, _ = env.step(action)
+            print("Next obs:", next_obs)
             algo.train_step((obs, action, reward, next_obs, done or truncated))
             obs = next_obs
             total_reward += reward
@@ -125,6 +147,9 @@ def run(
     training and eval results. This funciton essentially performs grid search.
     """
     env = gym.make(CUSTOM_ENV_ID)
+    
+    obs_shape = list(env.observation_space.shape)
+    n_actions = env.action_space.n
 
     # Create specific results directory under Results
     base_dir = Path(results_root) / get_file_date()
@@ -150,7 +175,7 @@ def run(
             save_dir.mkdir(parents=True, exist_ok=True)
 
             # Initialize algorithm with the current iteration of its hyperparameters
-            algo = algo_class(env, **params_dict)
+            algo = algo_class(obs_shape, n_actions, **params_dict)
 
             # Train and log the metrics
             train_metrics = train_algorithm(env, algo, training_config, save_dir)
