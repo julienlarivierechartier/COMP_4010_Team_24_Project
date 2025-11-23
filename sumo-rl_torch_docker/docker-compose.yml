@@ -14,10 +14,13 @@ services:
     hostname: sumo-rl-torch
     tty: true
     stdin_open: true
+    runtime: nvidia                   # Added this line to use the GPU for PPO
     environment:
       - DISPLAY=${DISPLAY}            # For GUI support in the container
       - SUMO_HOME=/usr/share/sumo     # Where SUMO is installed
       - LIBSUMO_AS_TRACI=0            # Set to 1 for performance boost, but no GUI
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility,graphics
     volumes:
       - ${PROJECT_ROOT}:${WORKDIR}
       - /tmp/.X11-unix:/tmp/.X11-unix # For GUI support in the container

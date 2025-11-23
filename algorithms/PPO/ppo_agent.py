@@ -10,7 +10,10 @@ from ..base import BaseAlgorithm
 class PPO():
     def __init__(self, obs_dim, action_dim,
                  lr=3e-4, gamma=0.99, clip=0.2,
-                 gae_lambda=0.95, K=4):
+                 gae_lambda=0.95, K=4, device=None):
+
+        # Added this to compute on GPU ewhen possible
+        self.device = device if device else ("cuda" if torch.cuda.is_available() else "cpu")
 
         self.gamma = gamma
         self.clip = clip
@@ -19,7 +22,8 @@ class PPO():
 
         self.buffer = RolloutBuffer()
 
-        self.policy = ActorCritic(obs_dim, action_dim)
+        # Send to device allows executing on the GPU
+        self.policy = ActorCritic(obs_dim, action_dim).to(self.device)
         self.optimizer = optim.Adam(self.policy.parameters(), lr=lr)
 
     def compute_advantages(self, rewards, values, dones):
@@ -36,16 +40,19 @@ class PPO():
         return advantages, returns
 
     def update(self):
-        states = torch.stack(self.buffer.states)
-        actions = torch.tensor(self.buffer.actions)
-        old_logprobs = torch.tensor(self.buffer.logprobs)
+        
+        device = self.device
+
+        states = torch.stack(self.buffer.states).to(device)
+        actions = torch.tensor(self.buffer.actions, device=device)
+        old_logprobs = torch.tensor(self.buffer.logprobs, device=device)
         rewards = self.buffer.rewards
         dones = self.buffer.dones
         values = self.buffer.values
 
         advantages, returns = self.compute_advantages(rewards, values, dones)
-        advantages = torch.tensor(advantages, dtype=torch.float32)
-        returns = torch.tensor(returns, dtype=torch.float32)
+        advantages = torch.tensor(advantages, dtype=torch.float32, device=device)
+        returns = torch.tensor(returns, dtype=torch.float32, device=device)
 
         for _ in range(self.K):
             logits, new_values = self.policy(states)
@@ -70,7 +77,7 @@ class PPO():
 
 
 class PPOAgent(BaseAlgorithm):
-    def __init__(self, env, lr=3e-4, gamma=0.99, clip=0.2, gae_lambda=0.95, K=4):
+    def __init__(self, env, lr=3e-4, gamma=0.99, clip=0.2, gae_lambda=0.95, K=4, device=None):
         """
         Wrap the PPO class to conform to BaseAlgorithm interface
         env: Gymnasium environment
@@ -78,8 +85,11 @@ class PPOAgent(BaseAlgorithm):
         obs_dim = env.observation_space.shape[0]
         action_dim = env.action_space.n
         
+        self.device = device if device else ("cuda" if torch.cuda.is_available() else "cpu")
+        print(f"PPOAgent initialized on device {self.device}")
+        
         self.env = env
-        self.ppo = PPO(obs_dim, action_dim, lr, gamma, clip, gae_lambda, K)
+        self.ppo = PPO(obs_dim, action_dim, lr, gamma, clip, gae_lambda, K, device=self.device)
 
     def reset(self):
         # PPO doesn't have episode-specific internal state, but we could clear buffer
@@ -87,7 +97,7 @@ class PPOAgent(BaseAlgorithm):
 
     def select_action(self, obs):
         # Convert obs to torch tensor if needed
-        obs_tensor = torch.tensor(obs, dtype=torch.float32)
+        obs_tensor = torch.tensor(obs, dtype=torch.float32, device=self.device)
         action, logprob, value = self.ppo.policy.get_action(obs_tensor)
         
         # Store step info in buffer
@@ -101,13 +111,13 @@ class PPOAgent(BaseAlgorithm):
     def train_step(self, transition=None):
         """
         For PPO, training happens in batches. We can train once the buffer
-        is populated. The transition argument is optional here.
+        is populated. The transition argument is unused here.
         """
-        # Only update if we have enough transitions (or can do every step)
         self.ppo.update()
 
     def save(self, path: Path | str):
         torch.save(self.ppo.policy.state_dict(), Path(path) / "ppo_model.pt")
 
     def load(self, path: Path | str):
-        self.ppo.policy.load_state_dict(torch.load(Path(path) / "ppo_model.pt"))
+        self.ppo.policy.load_state_dict(torch.load(Path(path) / "ppo_model.pt", map_location=self.device))
+        self.ppo.policy.to(self.device)
