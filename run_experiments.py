@@ -111,16 +111,16 @@ def train_algorithm(env:gym.Env, algo: BaseAlgorithm, training_config:dict, save
             obs = next_obs
             total_reward += reward
 
+        episode_time = time.time() - episode_start
+        results.append({
+            "episode": episode + 1,
+            "reward": total_reward,
+            "duration_sec": episode_time
+        })
+        
         if episode % training_config.get("log_interval", 1) == 0:
             print(f"Episode {episode+1} reward: {total_reward} | "
                   f"time: {episode_time:.2f}s")
-    
-    episode_time = time.time() - episode_start
-    results.append({
-        "episode": episode + 1,
-        "reward": total_reward,
-        "duration_sec": episode_time
-    })
 
     total_train_time = time.time() - total_train_start
     print(f"Total training time: {total_train_time:.2f}s")
