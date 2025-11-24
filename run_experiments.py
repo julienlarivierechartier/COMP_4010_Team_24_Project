@@ -217,8 +217,8 @@ def run(
             eval_metrics = evaluate_algorithm(env, algo, training_config)
 
             # Save JSON logs
-            save_json(train_metrics, save_dir / "train.json", "w")
-            save_json(eval_metrics, save_dir / "eval.json", "w")
+            save_json(train_metrics, save_dir / "train.json")
+            save_json(eval_metrics, save_dir / "eval.json")
 
 
 if __name__ == "__main__":
