@@ -4,7 +4,7 @@ import json
 import gymnasium as gym
 from ..base import BaseAlgorithm
 
-class FixedTimePolicy(BaseAlgorithm):
+class FixedTimeAgent(BaseAlgorithm):
     """Fixed-time baseline that cycles through phases in a predetermined sequence.
     Uses the original SUMO traffic light program timing."""
     

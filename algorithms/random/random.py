@@ -3,7 +3,7 @@ import gymnasium as gym
 from pathlib import Path
 import numpy as np
 
-class RandomPolicy(BaseAlgorithm):
+class RandomAgent(BaseAlgorithm):
     """Random baseline that selects actions uniformly at random."""
     
     def __init__(self, env:gym.Env):

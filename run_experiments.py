@@ -16,6 +16,8 @@ from algorithms import (
     PPOAgent, 
     QLearningAgent, 
     MaxPressureAgent,
+    RandomAgent,
+    FixedTimeAgent,
 )
 
 import gymnasium as gym
@@ -25,6 +27,8 @@ from custom_env import CUSTOM_ENV_ID
 ALGORITHMS = {
     "ppo": PPOAgent,
     "max_pressure": MaxPressureAgent,
+    "random": RandomAgent,
+    "fixed_time": FixedTimeAgent,
 }
 
 # Agent hyperparameters
