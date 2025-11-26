@@ -34,11 +34,11 @@ ALGORITHMS = {
 # Agent hyperparameters
 PARAM_GRID = {
     "ppo": {
-        "lr": [1e-4, 3e-4, 1e-3],
-        "gamma": [0.95, 0.99, 0.995],
-        "clip": [0.1, 0.2, 0.3],
-        "gae_lambda": [0.9, 0.95, 0.98],
-        "K": [3, 4, 5, 8],
+        "lr": [1e-4, 3e-4],
+        "gamma": [0.95, 0.99],
+        "clip": [0.1, 0.2],
+        "gae_lambda": [0.9, 0.95],
+        "K": [3, 4],
     },
     "max_pressure": {
         "ped_wait_weight": [0.0, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0]

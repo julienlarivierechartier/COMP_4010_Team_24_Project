@@ -16,7 +16,7 @@ USER_NAME=$(id -un)
 
 # ***IMPORTANT: Default LIBSUMO_AS_TRACI 
 # Setting it to 0 means use TraCI (GUI allowed).
-# Setting it to 1 means use LibSUMO (no GUI)
+# Setting it to 1 means use LibSUMO (no GUI) 
 LIBSUMO_AS_TRACI=0
 
 # Detect display for WSLg (GUI)
