@@ -13,6 +13,7 @@ import time
 from algorithms.base import BaseAlgorithm
 from algorithms.PPO import PPOAgent
 from algorithms.q_learning import QLearningAgent
+from algorithms.max_pressure import MaxPressureAgent
 #from algorithms.MaxPressure import MaxPressure
 
 import gymnasium as gym
@@ -27,36 +28,27 @@ from custom_env import CUSTOM_ENV_ID
 
 ALGORITHMS = {
     "ppo": PPOAgent,
+    "max_pressure": Ma
 }
 
-# Hyperparameter grid (each param has a list of candidate values)
-""" PARAM_GRID = {
-    "ppo": {
-        "lr": [3e-4],
-        "gamma": [0.99],
-        "clip": [0.2],
-        "gae_lambda": [0.95],
-        "K": [4],
-    },
-    "q-learning": {
-        "lr": [0.1],
-        "gamma": [0.99],
-        "epsilon": [1.0],
-        "eps_decay": [0.995],
-        "eps_min": [0.01],
-    },
-    "max_pressure": {
-    }
-} """
-
+# Agent hyperparameters
 PARAM_GRID = {
     "ppo": {
-        "lr": [3e-4],
-        "gamma": [0.99],
-        "clip": [0.2],
-        "gae_lambda": [0.95],
-        "K": [4],
+        "lr": [1e-4, 3e-4, 1e-3],
+        "gamma": [0.95, 0.99, 0.995],
+        "clip": [0.1, 0.2, 0.3],
+        "gae_lambda": [0.9, 0.95, 0.98],
+        "K": [3, 4, 5, 8],
     },
+    "max_pressure": {
+        "ped_wait_weight": [0.0, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0]
+    }
+}
+
+# Parameters of the environment
+ENV_PARAMS_GRID = {
+    "delta_time": [1, 5, 10],  # Action interval in seconds
+    "min_green": [5, 10],  # Minimum green time constraint
 }
 
 

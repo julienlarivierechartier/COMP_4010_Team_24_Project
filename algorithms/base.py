@@ -1,4 +1,6 @@
 from abc import ABC, abstractmethod
+from pathlib import Path
+import numpy as np
 
 class BaseAlgorithm(ABC):
     """Interface to standardize the training and evaluation of different algorithms.
@@ -7,28 +9,28 @@ class BaseAlgorithm(ABC):
     run_experiments.py"""
     
     @abstractmethod
-    def reset(self):
+    def reset(self) -> None:
         """Reset the internal state of the algorithm"""
         pass
     
     @abstractmethod
-    def select_action(self, obs):
+    def select_action(self, obs:np.ndarray) -> int:
         """"Select an action based on observation"""
         pass
 
     @abstractmethod
-    def train_step(self, transition):
+    def train_step(self, transition:np.ndarray) -> None:
         """Single training update step from the transition.
         transition = (state, action, reward, next_state, done)"""
         pass
 
     @abstractmethod
-    def save(self, path):
+    def save(self, path:Path) -> None:
         """Save the current state of the algorithm"""
         pass
 
     @abstractmethod
-    def load(self, path):
+    def load(self, path:Path) -> None:
         """Load a saved model"""
         pass
 

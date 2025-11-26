@@ -32,6 +32,8 @@ ROUTE_FILE_PATH = DEMO_DIR + "demo-intersection.rou.xml"
 object initialization)"""
 START_SIMULATION_DELAY = 2
 
+# Weight for pedestrian waiting time in pressure calculation
+DEAFULT_PED_WAIT_WEIGHT = 0.1
 
 class CustomTrafficSignal(TrafficSignal):
     
@@ -50,6 +52,7 @@ class CustomTrafficSignal(TrafficSignal):
         reward_fn: Union[str, Callable, list],
         reward_weights: list[float],
         sumo,
+        ped_wait_weight: float = DEAFULT_PED_WAIT_WEIGHT,
     ):
         """Initializes a TrafficSignal object.
 
@@ -82,6 +85,9 @@ class CustomTrafficSignal(TrafficSignal):
         self.reward_fn = reward_fn
         self.reward_weights = reward_weights
         self.sumo = sumo
+        
+        # Init weight for pedestrian waiting time in pressure calculation
+        self.ped_wait_weight = ped_wait_weight
 
         if type(self.reward_fn) is list:
             self.reward_dim = len(self.reward_fn)
@@ -168,7 +174,8 @@ class CustomTrafficSignal(TrafficSignal):
                 if ped_ids:
                     waits = [self.sumo.person.getWaitingTime(pid) for pid in ped_ids]
                     avg_wait = float(sum(waits)) / len(waits)
-                pressure += ped_count + 0.1 * avg_wait
+                # Use the configurable pedestrain wait weight in the pressure calculation
+                pressure += ped_count + self.ped_wait_weight * avg_wait
 
         return pressure
 
