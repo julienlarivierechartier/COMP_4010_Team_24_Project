@@ -10,25 +10,21 @@ from datetime import datetime
 import numpy as np
 import time
 
-from algorithms.base import BaseAlgorithm
-from algorithms.PPO import PPOAgent
-from algorithms.q_learning import QLearningAgent
-from algorithms.max_pressure import MaxPressureAgent
-#from algorithms.MaxPressure import MaxPressure
+# Import the algorithms (agents)
+from algorithms import (
+    BaseAlgorithm, 
+    PPOAgent, 
+    QLearningAgent, 
+    MaxPressureAgent,
+)
 
 import gymnasium as gym
 from custom_env import CUSTOM_ENV_ID
 
 # Reference for the algorithms evaluated
-""" ALGORITHMS = {
-    "ppo": PPOAgent,
-    #"max_pressure": MaxPressureAlgorithm,
-    "q-learning": QLearningAgent,
-} """
-
 ALGORITHMS = {
     "ppo": PPOAgent,
-    "max_pressure": Ma
+    "max_pressure": MaxPressureAgent,
 }
 
 # Agent hyperparameters
@@ -42,15 +38,23 @@ PARAM_GRID = {
     },
     "max_pressure": {
         "ped_wait_weight": [0.0, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0]
+    },
+    "random": {
+    },
+    "fixed_time": {
+        "cycle_phases": [
+            None,
+            [0, 1, 5, 6],
+            [0, 5],
+        ],
+        "phase_durations": [
+            None,
+            [2, 1, 2, 1],
+            [3, 3],
+            [4, 2],
+        ],
     }
 }
-
-# Parameters of the environment
-ENV_PARAMS_GRID = {
-    "delta_time": [1, 5, 10],  # Action interval in seconds
-    "min_green": [5, 10],  # Minimum green time constraint
-}
-
 
 # Training parameters
 TRAINING_CONFIG = {
@@ -159,6 +163,8 @@ def evaluate_algorithm(env:gym.Env, algo:BaseAlgorithm, config:dict):
     
     # Return the result metrics
     return {
+        "max_reward": float(np.max(rewards)),
+        "min_reward": float(np.min(rewards)),
         "avg_reward": float(np.mean(rewards)),
         "std_reward": float(np.std(rewards)),
         "all_rewards": rewards,

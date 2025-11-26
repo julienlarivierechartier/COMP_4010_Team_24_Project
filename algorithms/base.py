@@ -19,7 +19,7 @@ class BaseAlgorithm(ABC):
         pass
 
     @abstractmethod
-    def train_step(self, transition:np.ndarray) -> None:
+    def train_step(self, transition:tuple) -> None:
         """Single training update step from the transition.
         transition = (state, action, reward, next_state, done)"""
         pass
