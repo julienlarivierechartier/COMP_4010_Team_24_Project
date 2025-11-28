@@ -1,19 +1,31 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
+import numpy as np
 from pathlib import Path
 
 from .ppo_networks import ActorCritic
 from .rollout_buffer import RolloutBuffer
 from ..base import BaseAlgorithm
 
-class PPO():
-    def __init__(self, obs_dim, action_dim,
-                 lr=3e-4, gamma=0.99, clip=0.2,
-                 gae_lambda=0.95, K=4, device=None):
+
+class PPO:
+    def __init__(
+        self,
+        obs_dim,
+        action_dim,
+        lr=3e-4,
+        gamma=0.99,
+        clip=0.2,
+        gae_lambda=0.95,
+        K=4,
+        device=None,
+    ):
 
         # Added this to compute on GPU ewhen possible
-        self.device = device if device else ("cuda" if torch.cuda.is_available() else "cpu")
+        self.device = (
+            device if device else ("cuda" if torch.cuda.is_available() else "cpu")
+        )
 
         self.gamma = gamma
         self.clip = clip
@@ -32,7 +44,7 @@ class PPO():
         values = values + [0]  # bootstrap
 
         for i in reversed(range(len(rewards))):
-            delta = rewards[i] + self.gamma * values[i+1] * (1 - dones[i]) - values[i]
+            delta = rewards[i] + self.gamma * values[i + 1] * (1 - dones[i]) - values[i]
             gae = delta + self.gamma * self.gae_lambda * (1 - dones[i]) * gae
             advantages.insert(0, gae)
 
@@ -40,7 +52,7 @@ class PPO():
         return advantages, returns
 
     def update(self):
-        
+
         device = self.device
 
         states = torch.stack(self.buffer.states).to(device)
@@ -77,38 +89,44 @@ class PPO():
 
 
 class PPOAgent(BaseAlgorithm):
-    def __init__(self, env, lr=3e-4, gamma=0.99, clip=0.2, gae_lambda=0.95, K=4, device=None):
+    def __init__(
+        self, env, lr=3e-4, gamma=0.99, clip=0.2, gae_lambda=0.95, K=4, device=None
+    ):
         """
         Wrap the PPO class to conform to BaseAlgorithm interface
         env: Gymnasium environment
         """
         obs_dim = env.observation_space.shape[0]
         action_dim = env.action_space.n
-        
-        self.device = device if device else ("cuda" if torch.cuda.is_available() else "cpu")
+
+        self.device = (
+            device if device else ("cuda" if torch.cuda.is_available() else "cpu")
+        )
         print(f"PPOAgent initialized on device {self.device}")
-        
+
         self.env = env
-        self.ppo = PPO(obs_dim, action_dim, lr, gamma, clip, gae_lambda, K, device=self.device)
+        self.ppo = PPO(
+            obs_dim, action_dim, lr, gamma, clip, gae_lambda, K, device=self.device
+        )
 
     def reset(self):
         # PPO doesn't have episode-specific internal state, but we could clear buffer
         self.ppo.buffer.clear()
 
-    def select_action(self, obs):
+    def select_action(self, obs:np.ndarray, training:bool=True):
         # Convert obs to torch tensor if needed
         obs_tensor = torch.tensor(obs, dtype=torch.float32, device=self.device)
         action, logprob, value = self.ppo.policy.get_action(obs_tensor)
-        
+
         # Store step info in buffer
         self.ppo.buffer.states.append(obs_tensor.cpu())
         self.ppo.buffer.actions.append(action)
         self.ppo.buffer.logprobs.append(logprob.cpu())
         self.ppo.buffer.values.append(value.cpu().squeeze())
-        
+
         return action
 
-    def train_step(self, transition=None):
+    def train_step(self, transition:tuple=None):
         """
         For PPO, training happens in batches. We can train once the buffer
         is populated. The transition argument is unused here.

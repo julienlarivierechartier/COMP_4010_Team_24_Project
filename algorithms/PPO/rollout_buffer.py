@@ -1,5 +1,6 @@
 import torch
 
+
 class RolloutBuffer:
     def __init__(self):
         self.states = []

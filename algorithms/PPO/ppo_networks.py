@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+
 class ActorCritic(nn.Module):
     def __init__(self, obs_dim, action_dim):
         super().__init__()
@@ -12,16 +13,10 @@ class ActorCritic(nn.Module):
         )
 
         self.actor = nn.Sequential(
-            nn.Linear(128, 128),
-            nn.ReLU(),
-            nn.Linear(128, action_dim)
+            nn.Linear(128, 128), nn.ReLU(), nn.Linear(128, action_dim)
         )
 
-        self.critic = nn.Sequential(
-            nn.Linear(128, 128),
-            nn.ReLU(),
-            nn.Linear(128, 1)
-        )
+        self.critic = nn.Sequential(nn.Linear(128, 128), nn.ReLU(), nn.Linear(128, 1))
 
     def forward(self, x):
         shared = self.shared(x)

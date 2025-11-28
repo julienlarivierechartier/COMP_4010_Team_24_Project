@@ -4,11 +4,19 @@ from pathlib import Path
 from custom_env import CUSTOM_ENV_ID
 from ..base import BaseAlgorithm
 
+
 # Q-learning agent
 class QLearningAgent(BaseAlgorithm):
-    def __init__(self, env:gym.Env, lr=0.1, gamma=0.99,
-                 epsilon=1.0, eps_decay=0.995, eps_min=0.01):
-        
+    def __init__(
+        self,
+        env: gym.Env,
+        lr=0.1,
+        gamma=0.99,
+        epsilon=1.0,
+        eps_decay=0.995,
+        eps_min=0.01,
+    ):
+
         # Extract this from the env (like the other algos)
         self.obs_space = env.observation_space.shape[0]
         self.action_space = env.action_space.n
@@ -39,14 +47,14 @@ class QLearningAgent(BaseAlgorithm):
 
     # **Needed by BaseAlgorithm
     def reset(self):
-        """Resets agent internal state. This is called at the start of each episode. In 
+        """Resets agent internal state. This is called at the start of each episode. In
         the case of Q-Learning, this could reset the decayed epsilon if we wanted, or it
         could just do nothing (pass)."""
         # self.epsilon = 1.0
         pass
 
     # **Needed by BaseAlgorithm
-    def select_action(self, obs):
+    def select_action(self, obs, training:bool=True):
         """Selecting an action based on the observation tuple"""
         # epsilon-greedy
         if np.random.random() < self.epsilon:
@@ -55,7 +63,7 @@ class QLearningAgent(BaseAlgorithm):
             return np.argmax(self.q_table[obs])
 
     # **Needed by BaseAlgorithm
-    def train_step(self, transition:tuple):
+    def train_step(self, transition: tuple):
         """
         transition = (state, action, reward, next_state, done)
         """
@@ -65,18 +73,18 @@ class QLearningAgent(BaseAlgorithm):
         self.decay()
 
     # **Needed by BaseAlgorithm
-    def save(self, path:Path|str):
+    def save(self, path: Path | str):
         """Save Q-table and parameters."""
         np.savez(
             Path(path),
             q_table=self.q_table,
             epsilon=self.epsilon,
             lr=self.lr,
-            gamma=self.gamma
+            gamma=self.gamma,
         )
 
     # **Needed by BaseAlgorithm
-    def load(self, path:Path|str):
+    def load(self, path: Path | str):
         """Load Q-table and parameters."""
         data = np.load(Path(path))
         self.q_table = data["q_table"]
@@ -84,9 +92,11 @@ class QLearningAgent(BaseAlgorithm):
         self.lr = float(data["lr"])
         self.gamma = float(data["gamma"])
 
+
 # ------------------------------------
 # Testing the training independently
 # ------------------------------------
+
 
 def train(agent: BaseAlgorithm, env: gym.Env, episodes=1000):
     """Rewrote to use the BaseAlgorithm implementation."""
@@ -101,7 +111,6 @@ def train(agent: BaseAlgorithm, env: gym.Env, episodes=1000):
             action = agent.select_action(obs)
             next_obs, reward, terminated, truncated, _ = env.step(action)
 
-
             agent.train_step((obs, action, reward, next_obs, terminated or truncated))
 
             obs = next_obs
@@ -110,6 +119,7 @@ def train(agent: BaseAlgorithm, env: gym.Env, episodes=1000):
             done = terminated or truncated
 
         print(f"Episode: {ep+1} Reward: {total_reward}")
+
 
 if __name__ == "__main__":
     env = gym.make(CUSTOM_ENV_ID)

@@ -18,6 +18,7 @@ from algorithms import (
     MaxPressureAgent,
     RandomAgent,
     FixedTimeAgent,
+    DQNAgent
 )
 
 import gymnasium as gym
@@ -29,6 +30,7 @@ ALGORITHMS = {
     "max_pressure": MaxPressureAgent,
     "random": RandomAgent,
     "fixed_time": FixedTimeAgent,
+    "dqn": DQNAgent,
 }
 
 # Agent hyperparameters
@@ -42,6 +44,13 @@ PARAM_GRID = {
     },
     "max_pressure": {
         "ped_wait_weight": [0.0, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0]
+    },
+    "dqn": {
+        "lr": [1e-3, 1e-4],
+        "gamma": [0.95, 0.99],
+        "epsilon_decay": [0.99, 0.995],
+        "batch_size": [32, 64],
+        "target_update_freq": [5, 10],
     },
     "random": {
     },
@@ -58,6 +67,21 @@ PARAM_GRID = {
             [4, 2],
         ],
     }
+}
+
+
+# Redifinition with minimal config (just for internal testing without deleting the above ones)
+ALGORITHMS = {
+    "dqn": DQNAgent,
+}
+PARAM_GRID = {
+    "dqn": {
+        "lr": [1e-3, 1e-4],
+        "gamma": [0.95, 0.99],
+        "epsilon_decay": [0.99, 0.995],
+        "batch_size": [32, 64],
+        "target_update_freq": [5, 10],
+    },
 }
 
 # Training parameters
@@ -98,18 +122,20 @@ def train_algorithm(env:gym.Env, algo: BaseAlgorithm, training_config:dict, save
         episode_start = time.time()
         
         obs, _ = env.reset()
-        algo.reset()
         done = False
         truncated = False
         total_reward = 0
         
         while not (done or truncated):
-            action = algo.select_action(obs)
+            action = algo.select_action(obs, training=True)
             next_obs, reward, done, truncated, _ = env.step(action)
             #print("Next obs:", next_obs)
             algo.train_step((obs, action, reward, next_obs, done or truncated))
             obs = next_obs
             total_reward += reward
+
+        # Reset the algorithm at teh end of the episode
+        algo.reset()
 
         episode_time = time.time() - episode_start
         results.append({
@@ -152,7 +178,7 @@ def evaluate_algorithm(env:gym.Env, algo:BaseAlgorithm, config:dict):
         truncated = False
 
         while not (done or truncated):
-            action = algo.select_action(obs)
+            action = algo.select_action(obs, training=False)
             obs, reward, done, truncated, _ = env.step(action)
             total += reward
 
