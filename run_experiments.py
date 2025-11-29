@@ -52,9 +52,9 @@ PARAM_GRID = {
         "ped_wait_weight": [0.05, 0.1, 0.2, 0.5, 1.0, 2.0]
     },
     "dqn": {
-        "lr": [1e-3, 1e-4],
-        "gamma": [0.95, 0.99],
-        "epsilon_decay": [0.99, 0.995],
+        "lr": [1e-3],
+        "gamma": [0.95],
+        "epsilon": [0.1],
         "batch_size": [32, 64],
         "target_update_freq": [5, 10],
     },
@@ -66,7 +66,7 @@ PARAM_GRID = {
 
 
 """Redifinition with minimal config (just for internal testing without deleting the 
-above ones). Comment all the ones you want to test."""
+above ones). Comment all the ones you dont want to test and keep the one you need."""
 """ ALGORITHMS = {
     "max_pressure": MaxPressureAgent,
     
@@ -85,13 +85,13 @@ PARAM_GRID = {
     }
 } """
 
-ALGORITHMS = {
+""" ALGORITHMS = {
     "fixed_time": FixedTimeAgent,
 }
 PARAM_GRID = {
     "fixed_time": {
     },
-}
+} """
 
 """ ALGORITHMS = {
     "ppo": PPOAgent,
@@ -101,13 +101,13 @@ PARAM_GRID = {
     }
 } """
 
-""" ALGORITHMS = {
+ALGORITHMS = {
     "dqn": DQNAgent,
 }
 PARAM_GRID = {
     "dqn": {
     }
-} """
+}
 
 # Training parameters
 TRAINING_CONFIG = {
@@ -273,10 +273,11 @@ def run(
                 current_train_config["train_episodes"] = 0 
                 print(f"Skipping training loop for {algo_name}")
                 
-            # Train and log the metrics
+            # Train and log the metrics (always close the env)
             train_metrics = train_algorithm(env, algo, current_train_config, save_dir)
             eval_metrics = evaluate_algorithm(env, algo, training_config)
-
+            
+            env.close()
             # Save JSON logs
             save_json(train_metrics, save_dir / "train.json")
             save_json(eval_metrics, save_dir / "eval.json")

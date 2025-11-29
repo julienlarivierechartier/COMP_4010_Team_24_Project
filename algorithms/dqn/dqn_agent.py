@@ -25,7 +25,7 @@ class DQNAgent(BaseAlgorithm):
         env: gym.Env,
         lr: float = 1e-3,
         gamma: float = 0.99,
-        epsilon:float = 0.995,
+        epsilon:float = 0.1,
         buffer_capacity: float = 5000,
         batch_size: int = 64,
         target_update_freq: int = 10,
