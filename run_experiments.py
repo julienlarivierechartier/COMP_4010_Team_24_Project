@@ -189,7 +189,11 @@ def train_algorithm(algo: BaseAlgorithm, training_config:dict, save_dir: Path):
 
         # Reset the algorithm at teh end of the episode
         algo.reset()
-
+        
+        # Properly close the env and garbage-collect it
+        env.close()
+        del env
+        
         episode_time = time.time() - episode_start
         results.append({
             "episode": episode,
@@ -248,6 +252,11 @@ def evaluate_algorithm(algo:BaseAlgorithm, route_file_indices:np.ndarray):
         route_indices.append(index)
         ep_time = time.time() - ep_start
         episode_times.append(ep_time)
+        
+        # Properly close the env and garbage-collect it
+        env.close()
+        del env
+        
         print(f"Episode {index} reward: {total:.2f} | "
                   f"time: {ep_time:.2f}s")
         
