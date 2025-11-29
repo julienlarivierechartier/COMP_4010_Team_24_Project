@@ -9,6 +9,7 @@ from pathlib import Path
 from datetime import datetime
 import numpy as np
 import time
+from typing import Optional
 
 # Import the algorithms (agents)
 from algorithms import (
@@ -23,6 +24,12 @@ from algorithms import (
 
 import gymnasium as gym
 from custom_env import CUSTOM_ENV_ID
+from generate_route_files import (
+    NUM_EPISODES, 
+    ASSYMETRIC_ROUTES_DIR, 
+    BASE_ROUTE_FILE,
+    get_route_file_name,
+)
 
 # Set the seed for testing and uncomment line in env creation.
 SUMO_SEED = 32
@@ -42,21 +49,21 @@ BASELINE_ALGOS = ["max_pressure", "random", "fixed_time"]
 # Agent hyperparameters
 PARAM_GRID = {
     "ppo": {
-        "lr": [1e-4, 3e-4],
-        "gamma": [0.95, 0.99],
-        "clip": [0.1, 0.2],
+        "lr": [1e-3, 3e-4],
+        "gamma": [0.99],
+        "clip": [0.2],
         "gae_lambda": [0.9, 0.95],
-        "K": [3, 4],
+        "K": [4],
     },
     "max_pressure": {
-        "ped_wait_weight": [0.05, 0.1, 0.2, 0.5, 1.0, 2.0]
+        "ped_wait_weight": [0.5, 1.0, 1.5, 2.0]
     },
     "dqn": {
-        "lr": [1e-3],
+        "lr": [1e-3, 1e-2],
         "gamma": [0.95],
-        "epsilon": [0.1],
-        "batch_size": [32, 64],
-        "target_update_freq": [5, 10],
+        "epsilon": [0.05,0.1],
+        "batch_size": [64],
+        "target_update_freq": [10],
     },
     "random": {
     },
@@ -111,7 +118,7 @@ PARAM_GRID = {
 
 # Training parameters
 TRAINING_CONFIG = {
-    "train_episodes": 50,
+    "train_episodes": NUM_EPISODES,
     "log_interval": 1,
     "eval_episodes": 10
 }
@@ -128,18 +135,34 @@ def save_json(data:dict, fname:Path):
     with open(fname, "w") as f:
         json.dump(data, f, indent=4)
 
-def train_algorithm(env:gym.Env, algo: BaseAlgorithm, training_config:dict, save_dir: Path):
+def init_env(algo:BaseAlgorithm, route_file_path:Path, sumo_seed:Optional[int]=None):
+    kwargs = {
+        "use_gui": False,
+        "route_file": str(route_file_path),
+        "fixed_ts": isinstance(algo, FixedTimeAgent)
+    }
+    if sumo_seed is not None:
+        kwargs["sumo_seed"] = sumo_seed
+    return gym.make(CUSTOM_ENV_ID, **kwargs)
+
+def train_algorithm(algo: BaseAlgorithm, training_config:dict, save_dir: Path):
     """Loop to train the algorithm using the training config dict"""
     results = []
-    obs, _ = env.reset()
-    algo.reset()
 
     total_train_start = time.time()
 
     # Train the algorithm for the number of training episodes
     for episode in range(training_config["train_episodes"]):
+        
+        # Set the route file when creating the env, update the env in the algo object
+        route_file_path = get_route_file_name(ASSYMETRIC_ROUTES_DIR, episode)
+        env = init_env(algo, route_file_path, SUMO_SEED)
+        algo.set_env(env)
+        
+        # Start the timer
         episode_start = time.time()
         
+        # Reset the environment and flags
         obs, _ = env.reset()
         done = False
         truncated = False
@@ -158,13 +181,13 @@ def train_algorithm(env:gym.Env, algo: BaseAlgorithm, training_config:dict, save
 
         episode_time = time.time() - episode_start
         results.append({
-            "episode": episode + 1,
+            "episode": episode,
             "reward": total_reward,
             "duration_sec": episode_time
         })
         
         if episode % training_config.get("log_interval", 1) == 0:
-            print(f"Episode {episode+1} reward: {total_reward:.2f} | "
+            print(f"Episode {episode} reward: {total_reward:.2f} | "
                   f"time: {episode_time:.2f}s")
 
     total_train_time = time.time() - total_train_start
@@ -179,7 +202,7 @@ def train_algorithm(env:gym.Env, algo: BaseAlgorithm, training_config:dict, save
     }
 
 
-def evaluate_algorithm(env:gym.Env, algo:BaseAlgorithm, config:dict):
+def evaluate_algorithm(algo:BaseAlgorithm, config:dict):
     """Function to evaluate the algorithm performance"""
     rewards = []
     episode_times = []
@@ -189,6 +212,11 @@ def evaluate_algorithm(env:gym.Env, algo:BaseAlgorithm, config:dict):
     # Evaluate the algorithm for the number of episodes
     for episode in range(config["eval_episodes"]):
         ep_start = time.time()
+        
+        # Set the route file when creating the env, update the env in the algo object
+        route_file_path = get_route_file_name(ASSYMETRIC_ROUTES_DIR, episode)
+        env = init_env(algo, route_file_path, SUMO_SEED)
+        algo.set_env(env)
         
         obs, _ = env.reset()
         algo.reset()
@@ -205,7 +233,7 @@ def evaluate_algorithm(env:gym.Env, algo:BaseAlgorithm, config:dict):
         
         ep_time = time.time() - ep_start
         episode_times.append(ep_time)
-        print(f"Episode {episode+1} reward: {total:.2f} | "
+        print(f"Episode {episode} reward: {total:.2f} | "
                   f"time: {ep_time:.2f}s")
         
     total_eval_time = time.time() - eval_start
@@ -238,6 +266,15 @@ def run(
     base_dir = Path(results_root) / get_file_date()
     base_dir.mkdir(parents=True, exist_ok=True)
 
+    """Create a temp env to extract the num_obs and num_actions to init algos with 
+    because all algos have these two parameters in their constructor (regardless if 
+    they use them or not, and because all route files share the same number of obs and 
+    actions)"""
+    temp_env = gym.make(CUSTOM_ENV_ID)
+    num_obs = temp_env.observation_space.shape[0]
+    num_actions = temp_env.action_space.n
+    temp_env.close()
+
     for algo_name, algo_class in algorithms.items():
         
         # Get the hyperparameter lists
@@ -246,15 +283,7 @@ def run(
 
         # Try all combinations of all parameters
         for params_tuple in product(*params_values):
-            
-            # Moved the gym.make call inside the loop to allow fixed-time logic. 
-            env = gym.make(
-                CUSTOM_ENV_ID, 
-                use_gui=False, 
-                fixed_ts=True if algo_name == "fixed_time" else False,
-                #sumo_seed=SUMO_SEED,
-            )
-            
+                
             # Create the dict for keeping track of current config
             params_dict = dict(zip(params_keys, params_tuple))
 
@@ -266,7 +295,7 @@ def run(
             save_dir.mkdir(parents=True, exist_ok=True)
 
             # Initialize algorithm with the current iteration of its hyperparameters
-            algo = algo_class(env, **params_dict)
+            algo = algo_class(num_obs, num_actions, **params_dict)
 
             current_train_config = training_config.copy()
             if algo_name in baseline_algos:
@@ -274,10 +303,9 @@ def run(
                 print(f"Skipping training loop for {algo_name}")
                 
             # Train and log the metrics (always close the env)
-            train_metrics = train_algorithm(env, algo, current_train_config, save_dir)
-            eval_metrics = evaluate_algorithm(env, algo, training_config)
+            train_metrics = train_algorithm(algo, current_train_config, save_dir)
+            eval_metrics = evaluate_algorithm(algo, training_config)
             
-            env.close()
             # Save JSON logs
             save_json(train_metrics, save_dir / "train.json")
             save_json(eval_metrics, save_dir / "eval.json")

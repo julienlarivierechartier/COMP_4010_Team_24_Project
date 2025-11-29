@@ -3,13 +3,13 @@ from typing import Optional
 from custom_env import CustomSumoEnvironment, DEAFULT_PED_WAIT_WEIGHT
 from pathlib import Path
 import numpy as np
+import gymnasium as gym
 
 
 class MaxPressureAgent(BaseAlgorithm):
     """BaseAlgorithm wrapper implementing MaxPressure control heuristic."""
     
-    def __init__(self, env: CustomSumoEnvironment, ped_wait_weight: float = DEAFULT_PED_WAIT_WEIGHT):
-        self.env = env
+    def __init__(self, num_obs:int, num_actions:int, ped_wait_weight: float = DEAFULT_PED_WAIT_WEIGHT):
         self.ped_wait_weight = ped_wait_weight
         self.ts = None # Don't grab it yet, wait for reset
     
@@ -38,3 +38,6 @@ class MaxPressureAgent(BaseAlgorithm):
     
     def load(self, path: Path):
         pass
+
+    def set_env(self, env:gym.Env):
+        self.env = env

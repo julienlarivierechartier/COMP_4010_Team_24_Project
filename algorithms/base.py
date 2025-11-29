@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
 import numpy as np
-
+import gymnasium as gym
 
 class BaseAlgorithm(ABC):
     """Interface to standardize the training and evaluation of different algorithms.
@@ -35,4 +35,10 @@ class BaseAlgorithm(ABC):
     @abstractmethod
     def load(self, path: Path) -> None:
         """Load a saved model"""
+        pass
+    
+    @abstractmethod
+    def set_env(self, env:gym.Env) -> None:
+        """Method to update the internal reference to a gym environment. This allows to 
+        change the route file every episode."""
         pass

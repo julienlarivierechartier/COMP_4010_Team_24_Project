@@ -9,17 +9,16 @@ from ..base import BaseAlgorithm
 class QLearningAgent(BaseAlgorithm):
     def __init__(
         self,
-        env: gym.Env,
+        obs_space,
+        action_space,
         lr=0.1,
         gamma=0.99,
         epsilon=1.0,
         eps_decay=0.995,
         eps_min=0.01,
     ):
-
-        # Extract this from the env (like the other algos)
-        self.obs_space = env.observation_space.shape[0]
-        self.action_space = env.action_space.n
+        self.obs_space = obs_space
+        self.action_space = action_space
 
         # learning params
         self.lr = lr
@@ -92,6 +91,8 @@ class QLearningAgent(BaseAlgorithm):
         self.lr = float(data["lr"])
         self.gamma = float(data["gamma"])
 
+    def set_env(env:gym.Env):
+        pass
 
 # ------------------------------------
 # Testing the training independently

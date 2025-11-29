@@ -22,7 +22,8 @@ class DQNAgent(BaseAlgorithm):
 
     def __init__(
         self,
-        env: gym.Env,
+        obs_dim:int,
+        actions_dim:int,
         lr: float = 1e-3,
         gamma: float = 0.99,
         epsilon:float = 0.1,
@@ -51,10 +52,9 @@ class DQNAgent(BaseAlgorithm):
             device if device else ("cuda" if torch.cuda.is_available() else "cpu")
         )
 
-        # Set the environment and extract its dimensions
-        self.env = env
-        self.obs_dim = env.observation_space.shape[0]
-        self.action_dim = env.action_space.n
+        # Set the environment dimensions
+        self.obs_dim = obs_dim
+        self.action_dim = actions_dim
 
         # Initialize the learning hyperparameters
         self.gamma = gamma
@@ -197,3 +197,6 @@ class DQNAgent(BaseAlgorithm):
             self.target_network.to(self.device)
         else:
             print(f"Cannot load DQN algorithm from {path} because it does not exist.")
+            
+    def set_env(self, env:gym.Env):
+        pass

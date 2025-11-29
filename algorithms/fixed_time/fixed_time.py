@@ -8,8 +8,8 @@ class FixedTimeAgent(BaseAlgorithm):
     In SUMO-RL, the fixed time policy is set when creating the environment hence there
     is no need control via an agent."""
     
-    def __init__(self, env: gym.Env):
-        self.env = env
+    def __init__(self, num_obs:int, num_actions:int):
+        pass
 
     def reset(self) -> None:
         pass
@@ -25,4 +25,7 @@ class FixedTimeAgent(BaseAlgorithm):
         pass
 
     def load(self, path: Path) -> None:
+        pass
+    
+    def set_env(self, env:gym.Env):
         pass
