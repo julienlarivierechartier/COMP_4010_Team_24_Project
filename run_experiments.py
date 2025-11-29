@@ -24,6 +24,9 @@ from algorithms import (
 import gymnasium as gym
 from custom_env import CUSTOM_ENV_ID
 
+# Set the seed for testing and uncomment line in env creation.
+SUMO_SEED = 32
+
 # Reference for the algorithms evaluated
 ALGORITHMS = {
     "ppo": PPOAgent,
@@ -62,14 +65,15 @@ PARAM_GRID = {
 }
 
 
-# Redifinition with minimal config (just for internal testing without deleting the above ones)
+"""Redifinition with minimal config (just for internal testing without deleting the 
+above ones). Comment all the ones you want to test."""
 """ ALGORITHMS = {
     "max_pressure": MaxPressureAgent,
     
 }
 PARAM_GRID = {
     "max_pressure": {
-        "ped_wait_weight": [2.0]
+        "ped_wait_weight": [1]
     },
 } """
 
@@ -80,18 +84,30 @@ PARAM_GRID = {
     "random": {
     }
 } """
+
 ALGORITHMS = {
     "fixed_time": FixedTimeAgent,
-    
 }
 PARAM_GRID = {
     "fixed_time": {
-        
     },
 }
 
+""" ALGORITHMS = {
+    "ppo": PPOAgent,
+}
+PARAM_GRID = {
+    "ppo": {
+    }
+} """
 
-
+""" ALGORITHMS = {
+    "dqn": DQNAgent,
+}
+PARAM_GRID = {
+    "dqn": {
+    }
+} """
 
 # Training parameters
 TRAINING_CONFIG = {
@@ -119,12 +135,6 @@ def train_algorithm(env:gym.Env, algo: BaseAlgorithm, training_config:dict, save
     algo.reset()
 
     total_train_start = time.time()
-
-    print("Observation:", obs)
-    print("Type:", type(obs))
-    print("Dtype:", obs.dtype if isinstance(obs, np.ndarray) else None)
-    print("Shape:", obs.shape)
-    print("Min/Max:", np.min(obs), np.max(obs))
 
     # Train the algorithm for the number of training episodes
     for episode in range(training_config["train_episodes"]):
@@ -154,7 +164,7 @@ def train_algorithm(env:gym.Env, algo: BaseAlgorithm, training_config:dict, save
         })
         
         if episode % training_config.get("log_interval", 1) == 0:
-            print(f"Episode {episode+1} reward: {total_reward} | "
+            print(f"Episode {episode+1} reward: {total_reward:.2f} | "
                   f"time: {episode_time:.2f}s")
 
     total_train_time = time.time() - total_train_start
@@ -195,7 +205,7 @@ def evaluate_algorithm(env:gym.Env, algo:BaseAlgorithm, config:dict):
         
         ep_time = time.time() - ep_start
         episode_times.append(ep_time)
-        print(f"Episode {episode+1} reward: {total} | "
+        print(f"Episode {episode+1} reward: {total:.2f} | "
                   f"time: {ep_time:.2f}s")
         
     total_eval_time = time.time() - eval_start
@@ -223,7 +233,6 @@ def run(
     train and evaluate algorithms at the TSC task. Saves the algorithm end states, 
     training and eval results. This funciton essentially performs grid search.
     """
-    env = gym.make(CUSTOM_ENV_ID, use_gui=False) #should we also add num_seconds=3600?
 
     # Create specific results directory under Results
     base_dir = Path(results_root) / get_file_date()
@@ -237,6 +246,14 @@ def run(
 
         # Try all combinations of all parameters
         for params_tuple in product(*params_values):
+            
+            # Moved the gym.make call inside the loop to allow fixed-time logic. 
+            env = gym.make(
+                CUSTOM_ENV_ID, 
+                use_gui=False, 
+                fixed_ts=True if algo_name == "fixed_time" else False,
+                #sumo_seed=SUMO_SEED,
+            )
             
             # Create the dict for keeping track of current config
             params_dict = dict(zip(params_keys, params_tuple))

@@ -25,9 +25,7 @@ class DQNAgent(BaseAlgorithm):
         env: gym.Env,
         lr: float = 1e-3,
         gamma: float = 0.99,
-        epsilon_start: float = 1.0,
-        epsilon_min: float = 0.01,
-        epsilon_decay: float = 0.995,
+        epsilon:float = 0.995,
         buffer_capacity: float = 5000,
         batch_size: int = 64,
         target_update_freq: int = 10,
@@ -40,9 +38,7 @@ class DQNAgent(BaseAlgorithm):
             env: Gym environment (our CustomSumoEnvironment).
             lr: Gradient descent step size (alpha).
             gamma: Discount factor for future rewards.
-            epsilon_start: Initial exploration rate.
-            epsilon_min: Minimum exploration rate (prevents too much decay).
-            epsilon_decay: Epsilon decay rate per episode.
+            epsilon: Sets when to exploit versus explore.
             buffer_capacity: Maximum size of replay buffer.
             batch_size: Size of the mini-batches when sampling from buffer.
             target_update_freq: Number of main network updates before copying weights
@@ -64,11 +60,7 @@ class DQNAgent(BaseAlgorithm):
         self.gamma = gamma
         self.batch_size = batch_size
         self.target_update_freq = target_update_freq
-
-        # Init the dynamic exploration parameters
-        self.epsilon = epsilon_start
-        self.epsilon_min = epsilon_min
-        self.epsilon_decay = epsilon_decay
+        self.epsilon = epsilon
 
         # Initialize the empty replay buffer with the given capacity
         self.replay_buffer = ReplayBuffer(buffer_capacity)
@@ -174,9 +166,7 @@ class DQNAgent(BaseAlgorithm):
             self.target_network.load_state_dict(self.q_network.state_dict())
 
     def reset(self):
-        """Reset the model at the end of episode by applying epsilon decay and making
-        sure it is bounded by the minimum."""
-        self.epsilon = max(self.epsilon_min, self.epsilon * self.epsilon_decay)
+        pass
 
     def save(self, path: Path):
         """Create a checkpoint by saving main and target network, as well as training

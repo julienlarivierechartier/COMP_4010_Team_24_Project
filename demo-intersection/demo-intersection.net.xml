@@ -187,14 +187,14 @@
     <tlLogic id="main_junction" type="static" programID="0" offset="0">
         <phase duration="30" state="gGGgrrrrgGGgrrrrrGrG"/>
         <phase duration="20"  state="gGGgrrrrgGGgrrrrrrrr"/>
-        <phase duration="5"  state="yyygrrrryyygrrrrrrrr"/>
+        <phase duration="3"  state="yyygrrrryyygrrrrrrrr"/>
         <phase duration="10"  state="rrrGrrrrrrrGrrrrrrrr"/>
-        <phase duration="5"  state="rrryrrrrrrryrrrrrrrr"/>
+        <phase duration="3"  state="rrryrrrrrrryrrrrrrrr"/>
         <phase duration="30" state="rrrrgGGgrrrrgGGgGrGr"/>
         <phase duration="20"  state="rrrrgGGgrrrrgGGgrrrr"/>
-        <phase duration="5"  state="rrrryyygrrrryyygrrrr"/>
+        <phase duration="3"  state="rrrryyygrrrryyygrrrr"/>
         <phase duration="10"  state="rrrrrrrGrrrrrrrGrrrr"/>
-        <phase duration="5"  state="rrrrrrryrrrrrrryrrrr"/>
+        <phase duration="3"  state="rrrrrrryrrrrrrryrrrr"/>
     </tlLogic>
 
 

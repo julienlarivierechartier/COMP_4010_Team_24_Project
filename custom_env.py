@@ -425,5 +425,12 @@ register(
         "route_file": ROUTE_FILE_PATH,
         "reward_fn": custom_reward_fn,  # NEED TO IMPLEMENT ABOVE
         "observation_class": CustomObservationFunction,  # NEED TO IMPLEMENT ABOVE
+        "num_seconds":3600,
+        
+        # Added these to ensure multiples of delta time (prevents crashes and jams)
+        "delta_time":5,
+        "yellow_time":3,
+        "min_green":5,
+        "max_green":30,
     },
 )
