@@ -39,7 +39,7 @@
     <location netOffset="0.00,0.00" convBoundary="-400.00,-100.00,-200.00,100.00" origBoundary="-10000000000.00,-10000000000.00,10000000000.00,10000000000.00" projParameter="!"/>
 
     <edge id=":east_end_w0" function="walkingarea">
-        <lane id=":east_end_w0_0" index="0" allow="pedestrian" speed="2.78" length="20.00" width="4.00" shape="-200.00,8.00 -200.00,12.00 -200.00,-12.00 -200.00,-8.00"/>
+        <lane id=":east_end_w0_0" index="0" allow="pedestrian" speed="2.78" length="20.00" width="6.00" shape="-200.00,8.00 -200.00,12.00 -200.00,-12.00 -200.00,-8.00"/>
     </edge>
     <edge id=":main_junction_0" function="internal">
         <lane id=":main_junction_0_0" index="0" disallow="pedestrian" speed="7.25" length="7.27" shape="-306.40,13.50 -306.84,10.39 -308.17,8.17 -309.50,7.38"/>
@@ -106,96 +106,98 @@
         <lane id=":main_junction_23_0" index="0" disallow="pedestrian" speed="10.34" length="18.25" shape="-307.39,0.71 -306.19,0.84 -300.98,3.37 -297.84,7.59 -296.80,13.50"/>
     </edge>
     <edge id=":main_junction_c0" function="crossing" crossingEdges="north_out north_in">
-        <lane id=":main_junction_c0_0" index="0" allow="pedestrian" speed="2.78" length="16.00" width="4.00" shape="-292.00,11.50 -308.00,11.50" outlineShape="-292.00,13.50 -308.00,13.50 -308.15,11.82 -308.61,10.44 -309.29,9.50 -290.71,9.50 -291.39,10.44 -291.85,11.82"/>
+        <lane id=":main_junction_c0_0" index="0" allow="pedestrian" speed="2.78" length="16.00" width="8.00" shape="-292.00,11.50 -308.00,11.50" outlineShape="-292.00,13.50 -308.00,13.50 -308.15,11.82 -308.61,10.44 -309.29,9.50 -290.71,9.50 -291.39,10.44 -291.85,11.82"/>
     </edge>
     <edge id=":main_junction_c1" function="crossing" crossingEdges="east_out east_in">
-        <lane id=":main_junction_c1_0" index="0" allow="pedestrian" speed="2.78" length="16.00" width="4.00" shape="-288.50,-8.00 -288.50,8.00" outlineShape="-286.50,-8.10 -286.50,8.10 -288.18,8.15 -289.56,8.61 -290.50,9.29 -290.50,-9.29 -289.56,-8.61 -288.18,-8.15"/>
+        <lane id=":main_junction_c1_0" index="0" allow="pedestrian" speed="2.78" length="16.00" width="8.00" shape="-288.50,-8.00 -288.50,8.00" outlineShape="-286.50,-8.10 -286.50,8.10 -288.18,8.15 -289.56,8.61 -290.50,9.29 -290.50,-9.29 -289.56,-8.61 -288.18,-8.15"/>
     </edge>
     <edge id=":main_junction_c2" function="crossing" crossingEdges="south_out south_in">
-        <lane id=":main_junction_c2_0" index="0" allow="pedestrian" speed="2.78" length="16.00" width="4.00" shape="-308.00,-11.50 -292.00,-11.50" outlineShape="-308.00,-13.50 -292.00,-13.50 -291.85,-11.82 -291.39,-10.44 -290.71,-9.50 -309.29,-9.50 -308.61,-10.44 -308.15,-11.82"/>
+        <lane id=":main_junction_c2_0" index="0" allow="pedestrian" speed="2.78" length="16.00" width="8.00" shape="-308.00,-11.50 -292.00,-11.50" outlineShape="-308.00,-13.50 -292.00,-13.50 -291.85,-11.82 -291.39,-10.44 -290.71,-9.50 -309.29,-9.50 -308.61,-10.44 -308.15,-11.82"/>
     </edge>
     <edge id=":main_junction_c3" function="crossing" crossingEdges="west_out west_in">
-        <lane id=":main_junction_c3_0" index="0" allow="pedestrian" speed="2.78" length="16.00" width="4.00" shape="-311.50,8.00 -311.50,-8.00" outlineShape="-313.50,8.10 -313.50,-8.10 -311.82,-8.15 -310.44,-8.61 -309.50,-9.29 -309.50,9.29 -310.44,8.61 -311.82,8.15"/>
+        <lane id=":main_junction_c3_0" index="0" allow="pedestrian" speed="2.78" length="16.00" width="8.00" shape="-311.50,8.00 -311.50,-8.00" outlineShape="-313.50,8.10 -313.50,-8.10 -311.82,-8.15 -310.44,-8.61 -309.50,-9.29 -309.50,9.29 -310.44,8.61 -311.82,8.15"/>
     </edge>
     <edge id=":main_junction_w0" function="walkingarea">
-        <lane id=":main_junction_w0_0" index="0" allow="pedestrian" speed="2.78" length="4.49" width="4.00" shape="-313.50,8.00 -313.50,12.00 -312.00,13.50 -308.00,13.50 -308.15,11.82 -308.61,10.44 -309.38,9.38 -310.44,8.61 -311.82,8.15"/>
+        <lane id=":main_junction_w0_0" index="0" allow="pedestrian" speed="2.78" length="4.49" width="8.00" shape="-313.50,8.00 -313.50,12.00 -312.00,13.50 -308.00,13.50 -308.15,11.82 -308.61,10.44 -309.38,9.38 -310.44,8.61 -311.82,8.15"/>
     </edge>
     <edge id=":main_junction_w1" function="walkingarea">
-        <lane id=":main_junction_w1_0" index="0" allow="pedestrian" speed="2.78" length="4.49" width="4.00" shape="-292.00,13.50 -288.00,13.50 -286.50,12.00 -286.50,8.00 -288.18,8.15 -289.56,8.61 -290.62,9.37 -291.39,10.44 -291.85,11.82"/>
+        <lane id=":main_junction_w1_0" index="0" allow="pedestrian" speed="2.78" length="4.49" width="8.00" shape="-292.00,13.50 -288.00,13.50 -286.50,12.00 -286.50,8.00 -288.18,8.15 -289.56,8.61 -290.62,9.37 -291.39,10.44 -291.85,11.82"/>
     </edge>
     <edge id=":main_junction_w2" function="walkingarea">
-        <lane id=":main_junction_w2_0" index="0" allow="pedestrian" speed="2.78" length="4.49" width="4.00" shape="-286.50,-8.00 -286.50,-12.00 -288.00,-13.50 -292.00,-13.50 -291.85,-11.82 -291.39,-10.44 -290.62,-9.38 -289.56,-8.61 -288.18,-8.15"/>
+        <lane id=":main_junction_w2_0" index="0" allow="pedestrian" speed="2.78" length="4.49" width="8.00" shape="-286.50,-8.00 -286.50,-12.00 -288.00,-13.50 -292.00,-13.50 -291.85,-11.82 -291.39,-10.44 -290.62,-9.38 -289.56,-8.61 -288.18,-8.15"/>
     </edge>
     <edge id=":main_junction_w3" function="walkingarea">
-        <lane id=":main_junction_w3_0" index="0" allow="pedestrian" speed="2.78" length="4.49" width="4.00" shape="-308.00,-13.50 -312.00,-13.50 -313.50,-12.00 -313.50,-8.00 -311.82,-8.15 -310.44,-8.61 -309.38,-9.37 -308.61,-10.44 -308.15,-11.82"/>
+        <lane id=":main_junction_w3_0" index="0" allow="pedestrian" speed="2.78" length="4.49" width="8.00" shape="-308.00,-13.50 -312.00,-13.50 -313.50,-12.00 -313.50,-8.00 -311.82,-8.15 -310.44,-8.61 -309.38,-9.37 -308.61,-10.44 -308.15,-11.82"/>
     </edge>
     <edge id=":north_end_w0" function="walkingarea">
-        <lane id=":north_end_w0_0" index="0" allow="pedestrian" speed="2.78" length="20.00" width="4.00" shape="-308.00,100.00 -312.00,100.00 -288.00,100.00 -292.00,100.00"/>
+        <lane id=":north_end_w0_0" index="0" allow="pedestrian" speed="2.78" length="20.00" width="6.00" shape="-308.00,100.00 -312.00,100.00 -288.00,100.00 -292.00,100.00"/>
     </edge>
     <edge id=":south_end_w0" function="walkingarea">
-        <lane id=":south_end_w0_0" index="0" allow="pedestrian" speed="2.78" length="20.00" width="4.00" shape="-292.00,-100.00 -288.00,-100.00 -312.00,-100.00 -308.00,-100.00"/>
+        <lane id=":south_end_w0_0" index="0" allow="pedestrian" speed="2.78" length="20.00" width="6.00" shape="-292.00,-100.00 -288.00,-100.00 -312.00,-100.00 -308.00,-100.00"/>
     </edge>
     <edge id=":west_end_w0" function="walkingarea">
-        <lane id=":west_end_w0_0" index="0" allow="pedestrian" speed="2.78" length="20.00" width="4.00" shape="-400.00,-8.00 -400.00,-12.00 -400.00,12.00 -400.00,8.00"/>
+        <lane id=":west_end_w0_0" index="0" allow="pedestrian" speed="2.78" length="20.00" width="6.00" shape="-400.00,-8.00 -400.00,-12.00 -400.00,12.00 -400.00,8.00"/>
     </edge>
 
     <edge id="east_in" from="east_end" to="main_junction" priority="-1" spreadType="roadCenter">
-        <lane id="east_in_0" index="0" allow="pedestrian" speed="13.89" length="86.50" width="4.00" shape="-200.00,10.00 -286.50,10.00"/>
+        <lane id="east_in_0" index="0" allow="pedestrian" speed="13.89" length="86.50" width="6.00" shape="-200.00,10.00 -286.50,10.00"/>
         <lane id="east_in_1" index="1" disallow="pedestrian" speed="13.89" length="86.50" shape="-200.00,6.40 -286.50,6.40"/>
         <lane id="east_in_2" index="2" disallow="pedestrian" speed="13.89" length="86.50" shape="-200.00,3.20 -286.50,3.20"/>
         <lane id="east_in_3" index="3" disallow="pedestrian" speed="13.89" length="86.50" shape="-200.00,-0.00 -286.50,-0.00"/>
     </edge>
     <edge id="east_out" from="main_junction" to="east_end" priority="-1" spreadType="roadCenter">
-        <lane id="east_out_0" index="0" allow="pedestrian" speed="13.89" length="86.50" width="4.00" shape="-286.50,-10.00 -200.00,-10.00"/>
+        <lane id="east_out_0" index="0" allow="pedestrian" speed="13.89" length="86.50" width="6.00" shape="-286.50,-10.00 -200.00,-10.00"/>
         <lane id="east_out_1" index="1" disallow="pedestrian" speed="13.89" length="86.50" shape="-286.50,-6.40 -200.00,-6.40"/>
         <lane id="east_out_2" index="2" disallow="pedestrian" speed="13.89" length="86.50" shape="-286.50,-3.20 -200.00,-3.20"/>
     </edge>
     <edge id="north_in" from="north_end" to="main_junction" priority="-1" spreadType="roadCenter">
-        <lane id="north_in_0" index="0" allow="pedestrian" speed="13.89" length="86.50" width="4.00" shape="-310.00,100.00 -310.00,13.50"/>
+        <lane id="north_in_0" index="0" allow="pedestrian" speed="13.89" length="86.50" width="6.00" shape="-310.00,100.00 -310.00,13.50"/>
         <lane id="north_in_1" index="1" disallow="pedestrian" speed="13.89" length="86.50" shape="-306.40,100.00 -306.40,13.50"/>
         <lane id="north_in_2" index="2" disallow="pedestrian" speed="13.89" length="86.50" shape="-303.20,100.00 -303.20,13.50"/>
         <lane id="north_in_3" index="3" disallow="pedestrian" speed="13.89" length="86.50" shape="-300.00,100.00 -300.00,13.50"/>
     </edge>
     <edge id="north_out" from="main_junction" to="north_end" priority="-1" spreadType="roadCenter">
-        <lane id="north_out_0" index="0" allow="pedestrian" speed="13.89" length="86.50" width="4.00" shape="-290.00,13.50 -290.00,100.00"/>
+        <lane id="north_out_0" index="0" allow="pedestrian" speed="13.89" length="86.50" width="6.00" shape="-290.00,13.50 -290.00,100.00"/>
         <lane id="north_out_1" index="1" disallow="pedestrian" speed="13.89" length="86.50" shape="-293.60,13.50 -293.60,100.00"/>
         <lane id="north_out_2" index="2" disallow="pedestrian" speed="13.89" length="86.50" shape="-296.80,13.50 -296.80,100.00"/>
     </edge>
     <edge id="south_in" from="south_end" to="main_junction" priority="-1" spreadType="roadCenter">
-        <lane id="south_in_0" index="0" allow="pedestrian" speed="13.89" length="86.50" width="4.00" shape="-290.00,-100.00 -290.00,-13.50"/>
+        <lane id="south_in_0" index="0" allow="pedestrian" speed="13.89" length="86.50" width="6.00" shape="-290.00,-100.00 -290.00,-13.50"/>
         <lane id="south_in_1" index="1" disallow="pedestrian" speed="13.89" length="86.50" shape="-293.60,-100.00 -293.60,-13.50"/>
         <lane id="south_in_2" index="2" disallow="pedestrian" speed="13.89" length="86.50" shape="-296.80,-100.00 -296.80,-13.50"/>
         <lane id="south_in_3" index="3" disallow="pedestrian" speed="13.89" length="86.50" shape="-300.00,-100.00 -300.00,-13.50"/>
     </edge>
     <edge id="south_out" from="main_junction" to="south_end" priority="-1" spreadType="roadCenter">
-        <lane id="south_out_0" index="0" allow="pedestrian" speed="13.89" length="86.50" width="4.00" shape="-310.00,-13.50 -310.00,-100.00"/>
+        <lane id="south_out_0" index="0" allow="pedestrian" speed="13.89" length="86.50" width="6.00" shape="-310.00,-13.50 -310.00,-100.00"/>
         <lane id="south_out_1" index="1" disallow="pedestrian" speed="13.89" length="86.50" shape="-306.40,-13.50 -306.40,-100.00"/>
         <lane id="south_out_2" index="2" disallow="pedestrian" speed="13.89" length="86.50" shape="-303.20,-13.50 -303.20,-100.00"/>
     </edge>
     <edge id="west_in" from="west_end" to="main_junction" priority="-1" spreadType="roadCenter">
-        <lane id="west_in_0" index="0" allow="pedestrian" speed="13.89" length="86.50" width="4.00" shape="-400.00,-10.00 -313.50,-10.00"/>
+        <lane id="west_in_0" index="0" allow="pedestrian" speed="13.89" length="86.50" width="6.00" shape="-400.00,-10.00 -313.50,-10.00"/>
         <lane id="west_in_1" index="1" disallow="pedestrian" speed="13.89" length="86.50" shape="-400.00,-6.40 -313.50,-6.40"/>
         <lane id="west_in_2" index="2" disallow="pedestrian" speed="13.89" length="86.50" shape="-400.00,-3.20 -313.50,-3.20"/>
         <lane id="west_in_3" index="3" disallow="pedestrian" speed="13.89" length="86.50" shape="-400.00,0.00 -313.50,0.00"/>
     </edge>
     <edge id="west_out" from="main_junction" to="west_end" priority="-1" spreadType="roadCenter">
-        <lane id="west_out_0" index="0" allow="pedestrian" speed="13.89" length="86.50" width="4.00" shape="-313.50,10.00 -400.00,10.00"/>
+        <lane id="west_out_0" index="0" allow="pedestrian" speed="13.89" length="86.50" width="6.00" shape="-313.50,10.00 -400.00,10.00"/>
         <lane id="west_out_1" index="1" disallow="pedestrian" speed="13.89" length="86.50" shape="-313.50,6.40 -400.00,6.40"/>
         <lane id="west_out_2" index="2" disallow="pedestrian" speed="13.89" length="86.50" shape="-313.50,3.20 -400.00,3.20"/>
     </edge>
 
     <tlLogic id="main_junction" type="static" programID="0" offset="0">
-        <phase duration="28" state="gGGgrrrrgGGgrrrrrGrG"/>
-        <phase duration="5"  state="gGGgrrrrgGGgrrrrrrrr"/>
-        <phase duration="3"  state="yyygrrrryyygrrrrrrrr"/>
-        <phase duration="6"  state="rrrGrrrrrrrGrrrrrrrr"/>
-        <phase duration="3"  state="rrryrrrrrrryrrrrrrrr"/>
-        <phase duration="28" state="rrrrgGGgrrrrgGGgGrGr"/>
-        <phase duration="5"  state="rrrrgGGgrrrrgGGgrrrr"/>
-        <phase duration="3"  state="rrrryyygrrrryyygrrrr"/>
-        <phase duration="6"  state="rrrrrrrGrrrrrrrGrrrr"/>
-        <phase duration="3"  state="rrrrrrryrrrrrrryrrrr"/>
+        <phase duration="30" state="gGGgrrrrgGGgrrrrrGrG"/>
+        <phase duration="20"  state="gGGgrrrrgGGgrrrrrrrr"/>
+        <phase duration="5"  state="yyygrrrryyygrrrrrrrr"/>
+        <phase duration="10"  state="rrrGrrrrrrrGrrrrrrrr"/>
+        <phase duration="5"  state="rrryrrrrrrryrrrrrrrr"/>
+        <phase duration="30" state="rrrrgGGgrrrrgGGgGrGr"/>
+        <phase duration="20"  state="rrrrgGGgrrrrgGGgrrrr"/>
+        <phase duration="5"  state="rrrryyygrrrryyygrrrr"/>
+        <phase duration="10"  state="rrrrrrrGrrrrrrrGrrrr"/>
+        <phase duration="5"  state="rrrrrrryrrrrrrryrrrr"/>
     </tlLogic>
+
+
 
     <junction id="east_end" type="dead_end" x="-200.00" y="0.00" incLanes="east_out_0 east_out_1 east_out_2" intLanes="" shape="-200.00,-1.60 -200.00,-12.00 -200.00,-1.60"/>
     <junction id="main_junction" type="traffic_light" x="-300.00" y="0.00" incLanes="north_in_0 north_in_1 north_in_2 north_in_3 east_in_0 east_in_1 east_in_2 east_in_3 south_in_0 south_in_1 south_in_2 south_in_3 west_in_0 west_in_1 west_in_2 west_in_3 :main_junction_w1_0 :main_junction_w2_0 :main_junction_w3_0 :main_junction_w0_0" intLanes=":main_junction_16_0 :main_junction_1_0 :main_junction_1_1 :main_junction_17_0 :main_junction_18_0 :main_junction_5_0 :main_junction_5_1 :main_junction_19_0 :main_junction_20_0 :main_junction_9_0 :main_junction_9_1 :main_junction_21_0 :main_junction_22_0 :main_junction_13_0 :main_junction_13_1 :main_junction_23_0 :main_junction_c0_0 :main_junction_c1_0 :main_junction_c2_0 :main_junction_c3_0" shape="-312.00,13.50 -288.00,13.50 -287.83,12.67 -287.62,12.37 -287.33,12.17 -286.96,12.04 -286.50,12.00 -286.50,-12.00 -287.33,-12.17 -287.62,-12.37 -287.83,-12.67 -287.96,-13.04 -288.00,-13.50 -312.00,-13.50 -312.17,-12.67 -312.38,-12.37 -312.67,-12.17 -313.04,-12.04 -313.50,-12.00 -313.50,12.00 -312.67,12.17 -312.38,12.37 -312.17,12.67 -312.04,13.04">

@@ -287,6 +287,9 @@ class CustomSumoEnvironment(SumoEnvironment):
             str(self.waiting_time_memory),
             "--time-to-teleport",
             str(self.time_to_teleport),
+            # Added this to prevent pedestrian jams
+            "--pedestrian.striping.jamtime", "600",
+            "--pedestrian.striping.jamtime.crossing", "60",
         ]
         if self.begin_time > 0:
             sumo_cmd.append(f"-b {self.begin_time}")
@@ -422,6 +425,5 @@ register(
         "route_file": ROUTE_FILE_PATH,
         "reward_fn": custom_reward_fn,  # NEED TO IMPLEMENT ABOVE
         "observation_class": CustomObservationFunction,  # NEED TO IMPLEMENT ABOVE
-        "time_to_teleport": 120,
     },
 )

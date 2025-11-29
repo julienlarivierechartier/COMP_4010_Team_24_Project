@@ -46,7 +46,7 @@ PARAM_GRID = {
         "K": [3, 4],
     },
     "max_pressure": {
-        "ped_wait_weight": [0.0, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0]
+        "ped_wait_weight": [0.05, 0.1, 0.2, 0.5, 1.0, 2.0]
     },
     "dqn": {
         "lr": [1e-3, 1e-4],
@@ -58,22 +58,40 @@ PARAM_GRID = {
     "random": {
     },
     "fixed_time": {
-        "cycle_phases": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-        "phase_durations": [28, 5, 3, 6, 3, 28, 5, 3, 6, 3],
     }
 }
 
 
 # Redifinition with minimal config (just for internal testing without deleting the above ones)
-ALGORITHMS = {
+""" ALGORITHMS = {
     "max_pressure": MaxPressureAgent,
     
 }
 PARAM_GRID = {
     "max_pressure": {
-        "ped_wait_weight": [0.0, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0]
+        "ped_wait_weight": [2.0]
+    },
+} """
+
+""" ALGORITHMS = {
+    "random": RandomAgent,
+}
+PARAM_GRID = {
+    "random": {
+    }
+} """
+ALGORITHMS = {
+    "fixed_time": FixedTimeAgent,
+    
+}
+PARAM_GRID = {
+    "fixed_time": {
+        
     },
 }
+
+
+
 
 # Training parameters
 TRAINING_CONFIG = {

@@ -15,7 +15,7 @@ class RandomAgent(BaseAlgorithm):
 
     def select_action(self, obs: np.ndarray, training:bool=True) -> int:
         """Select a random action."""
-        return self.action_space.sample()
+        return self.env.action_space.sample()
 
     def train_step(self, transition: tuple) -> None:
         pass
