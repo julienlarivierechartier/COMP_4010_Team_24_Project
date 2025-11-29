@@ -52,19 +52,19 @@ BASELINE_ALGOS = ["max_pressure", "random", "fixed_time"]
 # Agent hyperparameters
 PARAM_GRID = {
     "ppo": {
-        "lr": [1e-3, 3e-4],
+        "lr": [3e-4],
         "gamma": [0.99],
         "clip": [0.2],
-        "gae_lambda": [0.9, 0.95],
+        "gae_lambda": [0.9],
         "K": [4],
     },
     "max_pressure": {
-        "ped_wait_weight": [0.5, 1.0, 1.5, 2.0]
+        "ped_wait_weight": [1.0,]
     },
     "dqn": {
-        "lr": [1e-3, 1e-2],
+        "lr": [1e-3],
         "gamma": [0.95],
-        "epsilon": [0.05,0.1],
+        "epsilon": [0.05],
         "batch_size": [64],
         "target_update_freq": [10],
     },
@@ -339,7 +339,7 @@ def run(
                 
             # Train and log the metrics (always close the env)
             train_metrics = train_algorithm(algo, current_train_config, save_dir)
-            eval_metrics = evaluate_algorithm(algo, training_config, route_file_indices)
+            eval_metrics = evaluate_algorithm(algo, route_file_indices)
             
             # Save JSON logs
             save_json(train_metrics, save_dir / "train.json")
