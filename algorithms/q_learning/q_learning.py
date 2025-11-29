@@ -11,7 +11,7 @@ class QLearningAgent(BaseAlgorithm):
     """
     def __init__(
         self,
-        obs_space,
+        obs_dim,
         action_space,
         lr=0.1,
         gamma=0.99,
@@ -20,7 +20,7 @@ class QLearningAgent(BaseAlgorithm):
         eps_min=0.01,
         bins: int | list[int] = 10,
     ):
-        self.obs_space = obs_space
+        self.obs_dim = obs_dim
         self.action_space = action_space
 
         # learning hyperparameters
@@ -38,14 +38,11 @@ class QLearningAgent(BaseAlgorithm):
                 raise ValueError("bins length must match obs dim")
             self.bins_per_feature = np.array(bins, dtype=int)
 
-        # observation bounds for linear binning
-        self.obs_low = np.array(env.observation_space.low, dtype=np.float32)
-        self.obs_high = np.array(env.observation_space.high, dtype=np.float32)
-        self.obs_range = np.where(
-            (self.obs_high - self.obs_low) == 0,
-            1e-8,
-            self.obs_high - self.obs_low,
-        )
+        # observation bounds for linear binning (they are initialized in set_env)
+        self.obs_low = None
+        self.obs_high = None
+        self.obs_range = None
+
         # sparse Q-table: only store visited states
         self.q_table: dict[tuple, np.ndarray] = {}
 
@@ -136,8 +133,15 @@ class QLearningAgent(BaseAlgorithm):
             self.obs_high - self.obs_low,
         )
 
-    def set_env(env:gym.Env):
-        pass
+    def set_env(self, env:gym.Env):
+        self.env = env 
+        self.obs_low = np.array(env.observation_space.low, dtype=np.float32)
+        self.obs_high = np.array(env.observation_space.high, dtype=np.float32)
+        self.obs_range = np.where(
+            (self.obs_high - self.obs_low) == 0,
+            1e-8,
+            self.obs_high - self.obs_low,
+        )
 
 # ------------------------------------
 # Testing the training independently
@@ -164,5 +168,8 @@ def train(agent: BaseAlgorithm, env: gym.Env, episodes=1000):
 
 if __name__ == "__main__":
     env = gym.make(CUSTOM_ENV_ID)
-    agent = QLearningAgent(env)
+    obs_dim = env.observation_space.shape[0]
+    action_space = env.action_space.n
+    agent = QLearningAgent(obs_dim, action_space)
+    agent.set_env(env)
     train(agent, env)
