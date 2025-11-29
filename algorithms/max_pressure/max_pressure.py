@@ -5,31 +5,35 @@ import numpy as np
 
 
 class MaxPressureAgent(BaseAlgorithm):
-    """BaseAlgorithm wrapper implementating MaxPressure control heuristic. Allows tuning
-    the pedestrain wait weight"""
-
-    def __init__(
-        self,
-        env: CustomSumoEnvironment,
-        ped_wait_weight: float = DEAFULT_PED_WAIT_WEIGHT,
-    ):
+    """BaseAlgorithm wrapper implementing MaxPressure control heuristic."""
+    
+    def __init__(self, env: CustomSumoEnvironment, ped_wait_weight: float = DEAFULT_PED_WAIT_WEIGHT):
         self.env = env
-        self.ts = list(env.unwrapped.traffic_signals.values())[0]
-        # Set the weight for pedestrian waiting time in pressure calculation
-        self.ts.ped_wait_weight = ped_wait_weight
-
+        self.ped_wait_weight = ped_wait_weight
+        self.ts = None # Don't grab it yet, wait for reset
+    
     def reset(self):
-        pass
-
-    def select_action(self, obs: np.ndarray, training:bool=True):
-        """MaxPressure queries SUMO directly and does not need observations"""
+        """
+        CRITICAL FIX: logic to fetch the NEW TrafficSignal object.
+        Sumo-RL destroys and recreates TS objects on every env.reset().
+        We must update our reference here.
+        """
+        # We assume single agent for this specific project structure
+        self.ts = list(self.env.unwrapped.traffic_signals.values())[0]
+        
+        # Apply the weight configuration to the new TS object
+        self.ts.ped_wait_weight = self.ped_wait_weight
+    
+    def select_action(self, obs: np.ndarray):
+        """MaxPressure queries SUMO directly via the stored TS object"""
         return self.ts.select_max_pressure_action()
-
-    def train_step(self, transition: np.ndarray):
+    
+    def train_step(self, transition: tuple):
+        # No learning happens here
         pass
-
+    
     def save(self, path: Path):
         pass
-
+    
     def load(self, path: Path):
         pass

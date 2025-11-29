@@ -212,7 +212,7 @@ def run(
     train and evaluate algorithms at the TSC task. Saves the algorithm end states, 
     training and eval results. This funciton essentially performs grid search.
     """
-    env = gym.make(CUSTOM_ENV_ID, use_gui=False)
+    env = gym.make(CUSTOM_ENV_ID, use_gui=False) #should we also add num_seconds=3600?
 
     # Create specific results directory under Results
     base_dir = Path(results_root) / get_file_date()
@@ -240,8 +240,13 @@ def run(
             # Initialize algorithm with the current iteration of its hyperparameters
             algo = algo_class(env, **params_dict)
 
+            current_train_config = training_config.copy()
+            if algo_name in ["max_pressure"]:
+                current_train_config["train_episodes"] = 0 
+                print(f"Skipping training loop for {algo_name}")
+                
             # Train and log the metrics
-            train_metrics = train_algorithm(env, algo, training_config, save_dir)
+            train_metrics = train_algorithm(env, algo, current_train_config, save_dir)
             eval_metrics = evaluate_algorithm(env, algo, training_config)
 
             # Save JSON logs

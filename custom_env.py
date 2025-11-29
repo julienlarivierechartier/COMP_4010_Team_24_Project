@@ -422,5 +422,6 @@ register(
         "route_file": ROUTE_FILE_PATH,
         "reward_fn": custom_reward_fn,  # NEED TO IMPLEMENT ABOVE
         "observation_class": CustomObservationFunction,  # NEED TO IMPLEMENT ABOVE
+        "time_to_teleport": 120,
     },
 )
