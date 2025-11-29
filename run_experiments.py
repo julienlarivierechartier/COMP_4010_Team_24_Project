@@ -2,7 +2,6 @@
 "export LIBSUMO_AS_TRACI=1" before launching this script.
  """
 
-
 from itertools import product
 import json
 from pathlib import Path
@@ -34,6 +33,7 @@ ALGORITHMS = {
     "random": RandomAgent,
     "fixed_time": FixedTimeAgent,
     "dqn": DQNAgent,
+    "q_learning": QLearningAgent,
 }
 
 # Agorithms that do not require training (skip the training and straight to eval)
@@ -58,56 +58,63 @@ PARAM_GRID = {
         "batch_size": [32, 64],
         "target_update_freq": [5, 10],
     },
+    "q_learning": {
+        "lr": [0.1],
+        "gamma": [0.95],
+        "epsilon": [1.0],
+        "eps_decay": [0.995],
+        "eps_min": [0.01],
+        "bins": [8],
+    },
     "random": {
     },
     "fixed_time": {
     }
 }
 
-
-"""Redifinition with minimal config (just for internal testing without deleting the 
-above ones). Comment all the ones you dont want to test and keep the one you need."""
-""" ALGORITHMS = {
-    "max_pressure": MaxPressureAgent,
+# """Redifinition with minimal config (just for internal testing without deleting the 
+# above ones). Comment all the ones you dont want to test and keep the one you need."""
+# ALGORITHMS = {
+#     "max_pressure": MaxPressureAgent,
     
-}
-PARAM_GRID = {
-    "max_pressure": {
-        "ped_wait_weight": [1]
-    },
-} """
+# }
+# PARAM_GRID = {
+#     "max_pressure": {
+#         "ped_wait_weight": [1]
+#     },
+# }
 
-""" ALGORITHMS = {
-    "random": RandomAgent,
-}
-PARAM_GRID = {
-    "random": {
-    }
-} """
+# ALGORITHMS = {
+#     "random": RandomAgent,
+# }
+# PARAM_GRID = {
+#     "random": {
+#     }
+# }
 
-""" ALGORITHMS = {
-    "fixed_time": FixedTimeAgent,
-}
-PARAM_GRID = {
-    "fixed_time": {
-    },
-} """
+# ALGORITHMS = {
+#     "fixed_time": FixedTimeAgent,
+# }
+# PARAM_GRID = {
+#     "fixed_time": {
+#     },
+# }
 
-""" ALGORITHMS = {
-    "ppo": PPOAgent,
-}
-PARAM_GRID = {
-    "ppo": {
-    }
-} """
+# ALGORITHMS = {
+#     "ppo": PPOAgent,
+# }
+# PARAM_GRID = {
+#     "ppo": {
+#     }
+# }
 
-ALGORITHMS = {
-    "dqn": DQNAgent,
-}
-PARAM_GRID = {
-    "dqn": {
-    }
-}
+# ALGORITHMS = {
+#     "dqn": DQNAgent,
+# }
+# PARAM_GRID = {
+#     "dqn": {
+#     }
+# }
 
 # Training parameters
 TRAINING_CONFIG = {
@@ -133,7 +140,6 @@ def train_algorithm(env:gym.Env, algo: BaseAlgorithm, training_config:dict, save
     results = []
     obs, _ = env.reset()
     algo.reset()
-
     total_train_start = time.time()
 
     # Train the algorithm for the number of training episodes
