@@ -30,8 +30,11 @@ from generate_route_files import (
     get_route_file_name,
 )
 
-# Set the seed for testing and uncomment line in env creation.
-SUMO_SEED = 32
+# Set the seed for testing or set to None for results generation.
+SUMO_SEED = None
+
+# Eval route files
+RANDOM_SEED = 32
 
 # Reference for the algorithms evaluated
 ALGORITHMS = {
@@ -153,7 +156,8 @@ def init_env(algo:BaseAlgorithm, route_file_path:Path, sumo_seed:Optional[int]=N
     return gym.make(CUSTOM_ENV_ID, **kwargs)
 
 def train_algorithm(algo: BaseAlgorithm, training_config:dict, save_dir: Path):
-    """Loop to train the algorithm using the training config dict"""
+    """Loop to train the algorithm using the training config dict. Iterates over all of 
+    the 50 asymmetric route files"""
     results = []
 
     total_train_start = time.time()
@@ -209,19 +213,23 @@ def train_algorithm(algo: BaseAlgorithm, training_config:dict, save_dir: Path):
     }
 
 
-def evaluate_algorithm(algo:BaseAlgorithm, config:dict):
-    """Function to evaluate the algorithm performance"""
+def evaluate_algorithm(algo:BaseAlgorithm, route_file_indices:np.ndarray):
+    """Function to evaluate the algorithm performance. This function loads the route 
+    files at the given route_file_indices such that all algorithms are tested on the 
+    same route files."""
+    
     rewards = []
+    route_indices = []
     episode_times = []
     
     eval_start = time.time()
 
     # Evaluate the algorithm for the number of episodes
-    for episode in range(config["eval_episodes"]):
+    for index, route_file_index in enumerate(route_file_indices):
         ep_start = time.time()
         
         # Set the route file when creating the env, update the env in the algo object
-        route_file_path = get_route_file_name(ASSYMETRIC_ROUTES_DIR, episode)
+        route_file_path = get_route_file_name(ASSYMETRIC_ROUTES_DIR, route_file_index)
         env = init_env(algo, route_file_path, SUMO_SEED)
         algo.set_env(env)
         
@@ -237,10 +245,10 @@ def evaluate_algorithm(algo:BaseAlgorithm, config:dict):
             total += reward
 
         rewards.append(total)
-        
+        route_indices.append(index)
         ep_time = time.time() - ep_start
         episode_times.append(ep_time)
-        print(f"Episode {episode} reward: {total:.2f} | "
+        print(f"Episode {index} reward: {total:.2f} | "
                   f"time: {ep_time:.2f}s")
         
     total_eval_time = time.time() - eval_start
@@ -254,7 +262,8 @@ def evaluate_algorithm(algo:BaseAlgorithm, config:dict):
         "std_reward": float(np.std(rewards)),
         "all_rewards": rewards,
         "per_episode_time_sec": episode_times,
-        "total_eval_time_sec": total_eval_time
+        "total_eval_time_sec": total_eval_time,
+        "route_indices": route_file_indices,
     }
 
 def run(
@@ -263,6 +272,7 @@ def run(
     training_config:dict=TRAINING_CONFIG, 
     results_root:Path=RESULTS_ROOT,
     baseline_algos:list[str]=BASELINE_ALGOS,
+    random_seed:int=RANDOM_SEED,
 ):
     """Function to iterate over all combinations of algorithms and hyperparameters to 
     train and evaluate algorithms at the TSC task. Saves the algorithm end states, 
@@ -272,6 +282,15 @@ def run(
     # Create specific results directory under Results
     base_dir = Path(results_root) / get_file_date()
     base_dir.mkdir(parents=True, exist_ok=True)
+
+    """Generate a list of route file indices to use in evaluation (each algo gets the 
+    same files for evaluation)"""
+    np.random.seed(random_seed)
+    route_file_indices = np.random.choice(
+        training_config["train_episodes"], 
+        training_config["eval_episodes"], 
+        replace=False
+    ) 
 
     """Create a temp env to extract the num_obs and num_actions to init algos with 
     because all algos have these two parameters in their constructor (regardless if 
@@ -296,8 +315,8 @@ def run(
 
             print(f"Running {algo_name} with {params_dict}")
 
-            # Create folder: Results/timestamp/algo_lr_{k1}_{v1}_{k2}_{v2} etc..
-            name = algo_name + "_" + "_".join(f"{k}_{v}" for k, v in params_dict.items())
+            # Create folder Results/{timestamp}/algo_{name}_{k1}_{v1}_{k2}_{v2}
+            name = algo_name + "_".join(f"{k}_{v}" for k, v in params_dict.items())
             save_dir = base_dir / name
             save_dir.mkdir(parents=True, exist_ok=True)
 
@@ -311,7 +330,7 @@ def run(
                 
             # Train and log the metrics (always close the env)
             train_metrics = train_algorithm(algo, current_train_config, save_dir)
-            eval_metrics = evaluate_algorithm(algo, training_config)
+            eval_metrics = evaluate_algorithm(algo, training_config, route_file_indices)
             
             # Save JSON logs
             save_json(train_metrics, save_dir / "train.json")
