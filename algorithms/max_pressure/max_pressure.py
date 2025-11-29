@@ -1,4 +1,5 @@
 from ..base import BaseAlgorithm
+from typing import Optional
 from custom_env import CustomSumoEnvironment, DEAFULT_PED_WAIT_WEIGHT
 from pathlib import Path
 import numpy as np
@@ -24,7 +25,7 @@ class MaxPressureAgent(BaseAlgorithm):
         # Apply the weight configuration to the new TS object
         self.ts.ped_wait_weight = self.ped_wait_weight
     
-    def select_action(self, obs: np.ndarray):
+    def select_action(self, obs: np.ndarray, training:Optional[bool]=None):
         """MaxPressure queries SUMO directly via the stored TS object"""
         return self.ts.select_max_pressure_action()
     

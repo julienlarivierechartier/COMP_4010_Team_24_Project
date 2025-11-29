@@ -33,6 +33,9 @@ ALGORITHMS = {
     "dqn": DQNAgent,
 }
 
+# Agorithms that do not require training (skip the training and straight to eval)
+BASELINE_ALGOS = ["max_pressure", "random", "fixed_time"]
+
 # Agent hyperparameters
 PARAM_GRID = {
     "ppo": {
@@ -55,32 +58,20 @@ PARAM_GRID = {
     "random": {
     },
     "fixed_time": {
-        "cycle_phases": [
-            None,
-            [0, 1, 5, 6],
-            [0, 5],
-        ],
-        "phase_durations": [
-            None,
-            [2, 1, 2, 1],
-            [3, 3],
-            [4, 2],
-        ],
+        "cycle_phases": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        "phase_durations": [28, 5, 3, 6, 3, 28, 5, 3, 6, 3],
     }
 }
 
 
 # Redifinition with minimal config (just for internal testing without deleting the above ones)
 ALGORITHMS = {
-    "dqn": DQNAgent,
+    "max_pressure": MaxPressureAgent,
+    
 }
 PARAM_GRID = {
-    "dqn": {
-        "lr": [1e-3, 1e-4],
-        "gamma": [0.95, 0.99],
-        "epsilon_decay": [0.99, 0.995],
-        "batch_size": [32, 64],
-        "target_update_freq": [5, 10],
+    "max_pressure": {
+        "ped_wait_weight": [0.0, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0]
     },
 }
 
@@ -168,7 +159,7 @@ def evaluate_algorithm(env:gym.Env, algo:BaseAlgorithm, config:dict):
     eval_start = time.time()
 
     # Evaluate the algorithm for the number of episodes
-    for _ in range(config["eval_episodes"]):
+    for episode in range(config["eval_episodes"]):
         ep_start = time.time()
         
         obs, _ = env.reset()
@@ -186,7 +177,8 @@ def evaluate_algorithm(env:gym.Env, algo:BaseAlgorithm, config:dict):
         
         ep_time = time.time() - ep_start
         episode_times.append(ep_time)
-        print(f"Finished episode in {ep_time} seconds")
+        print(f"Episode {episode+1} reward: {total} | "
+                  f"time: {ep_time:.2f}s")
         
     total_eval_time = time.time() - eval_start
     print(f"Finished evaluation in {total_eval_time} seconds")
@@ -206,7 +198,8 @@ def run(
     algorithms:dict=ALGORITHMS, 
     hyperparams:dict=PARAM_GRID, 
     training_config:dict=TRAINING_CONFIG, 
-    results_root:Path=RESULTS_ROOT
+    results_root:Path=RESULTS_ROOT,
+    baseline_algos:list[str]=BASELINE_ALGOS,
 ):
     """Function to iterate over all combinations of algorithms and hyperparameters to 
     train and evaluate algorithms at the TSC task. Saves the algorithm end states, 
@@ -241,7 +234,7 @@ def run(
             algo = algo_class(env, **params_dict)
 
             current_train_config = training_config.copy()
-            if algo_name in ["max_pressure"]:
+            if algo_name in baseline_algos:
                 current_train_config["train_episodes"] = 0 
                 print(f"Skipping training loop for {algo_name}")
                 

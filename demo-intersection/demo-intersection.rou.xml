@@ -106,6 +106,4 @@
         <walk from="west_in" to="east_out"/>
     </personFlow>
 
-    
-
 </routes>
