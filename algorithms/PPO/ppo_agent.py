@@ -3,6 +3,7 @@ import torch.nn as nn
 import torch.optim as optim
 import numpy as np
 from pathlib import Path
+import gymnasium as gym
 
 from .ppo_networks import ActorCritic
 from .rollout_buffer import RolloutBuffer
@@ -90,21 +91,17 @@ class PPO:
 
 class PPOAgent(BaseAlgorithm):
     def __init__(
-        self, env, lr=3e-4, gamma=0.99, clip=0.2, gae_lambda=0.95, K=4, device=None
+        self, obs_dim, action_dim, lr=3e-4, gamma=0.99, clip=0.2, gae_lambda=0.95, K=4, device=None
     ):
         """
         Wrap the PPO class to conform to BaseAlgorithm interface
-        env: Gymnasium environment
         """
-        obs_dim = env.observation_space.shape[0]
-        action_dim = env.action_space.n
 
         self.device = (
             device if device else ("cuda" if torch.cuda.is_available() else "cpu")
         )
         print(f"PPOAgent initialized on device {self.device}")
 
-        self.env = env
         self.ppo = PPO(
             obs_dim, action_dim, lr, gamma, clip, gae_lambda, K, device=self.device
         )
@@ -143,3 +140,6 @@ class PPOAgent(BaseAlgorithm):
             self.ppo.policy.to(self.device)
         else:
             print(f"Cannot load algo at path {path} because it does not exist.")
+
+    def set_env(self, env: gym.Env):
+        pass

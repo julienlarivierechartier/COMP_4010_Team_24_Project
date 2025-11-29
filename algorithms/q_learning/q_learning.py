@@ -11,18 +11,17 @@ class QLearningAgent(BaseAlgorithm):
     """
     def __init__(
         self,
-        env: gym.Env,
-        lr: float = 0.1,
-        gamma: float = 0.99,
-        epsilon: float = 1.0,
-        eps_decay: float = 0.995,
-        eps_min: float = 0.01,
+        obs_space,
+        action_space,
+        lr=0.1,
+        gamma=0.99,
+        epsilon=1.0,
+        eps_decay=0.995,
+        eps_min=0.01,
         bins: int | list[int] = 10,
     ):
-        # environment info
-        self.env = env
-        self.obs_dim = env.observation_space.shape[0]
-        self.action_space = env.action_space.n
+        self.obs_space = obs_space
+        self.action_space = action_space
 
         # learning hyperparameters
         self.lr = lr
@@ -137,7 +136,14 @@ class QLearningAgent(BaseAlgorithm):
             self.obs_high - self.obs_low,
         )
 
-# standalone test entry
+    def set_env(env:gym.Env):
+        pass
+
+# ------------------------------------
+# Testing the training independently
+# ------------------------------------
+
+
 def train(agent: BaseAlgorithm, env: gym.Env, episodes=1000):
     for ep in range(episodes):
         obs, _ = env.reset()

@@ -7,8 +7,8 @@ import numpy as np
 class RandomAgent(BaseAlgorithm):
     """Random baseline that selects actions uniformly at random."""
 
-    def __init__(self, env: gym.Env):
-        self.env = env
+    def __init__(self, num_obs:int, num_actions:int):
+        pass
 
     def reset(self) -> None:
         pass
@@ -25,3 +25,6 @@ class RandomAgent(BaseAlgorithm):
 
     def load(self, path: Path) -> None:
         pass
+
+    def set_env(self, env:gym.Env):
+        self.env = env
