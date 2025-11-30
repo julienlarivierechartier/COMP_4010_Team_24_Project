@@ -102,6 +102,7 @@ class CustomTrafficSignal(TrafficSignal):
         self.reward_space = spaces.Box(low=-np.inf, high=np.inf, shape=(self.reward_dim,), dtype=np.float32)
 
         self.observation_fn = self.env.observation_class(self)
+        
 
         self._build_phases()
         
@@ -251,6 +252,7 @@ class CustomSumoEnvironment(SumoEnvironment):
 
     def _build_traffic_signals(self, conn):
         """Build CustomTrafficSignal objects that also keep track of pedestrians"""
+        
         if not isinstance(self.reward_fn, dict):
             self.reward_fn = {ts: self.reward_fn for ts in self.ts_ids}
 
@@ -336,7 +338,6 @@ class CustomSumoEnvironment(SumoEnvironment):
                 self.sumo.gui.setSchema(traci.gui.DEFAULT_VIEW, "real world")
             except Exception as e:
                 print(f"Warning: could not set GUI schema: {e}")
-
 
 class CustomObservationFunction(ObservationFunction):
     """

@@ -52,32 +52,32 @@ BASELINE_ALGOS = ["max_pressure", "random", "fixed_time"]
 # Agent hyperparameters
 PARAM_GRID = {
     "ppo": {
-        "lr": [3e-4],  
+        "lr": [1e-3, 3e-4],  
         "gamma": [0.99],  
         "clip": [0.2],
         "gae_lambda": [0.95], 
-        "K": [10],  
+        "K": [4, 10],  
         "entropy_coef": [0.01, 0.02],  
     },
     "max_pressure": {
-        "ped_wait_weight": [1.0,]
+        "ped_wait_weight": [0.5,1.0,1.5,2.0]
     },
     "dqn": {
-        "lr": [1e-3],
+        "lr": [1e-5, 1e-3, 1e-2],
         "gamma": [0.95],
         "epsilon_start": [1.0],
         "epsilon_min": [0.01],
         "epsilon_decay": [0.995],
-        "batch_size": [64],
-        "target_update_freq": [10],
+        "batch_size": [32, 64],
+        "target_update_freq": [10, 20],
     },
     "q_learning": {
-        "lr": [0.1],
+        "lr": [0.1, 0.01, 0.001],
         "gamma": [0.95],
         "epsilon": [1.0],
         "eps_decay": [0.995],
         "eps_min": [0.01],
-        "bins": [8],
+        "bins": [8, 12],
     },
     "random": {
     },

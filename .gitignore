@@ -74,3 +74,5 @@ coverage.xml
 # Environments
 .env
 .envrc
+
+sumo-rl/
