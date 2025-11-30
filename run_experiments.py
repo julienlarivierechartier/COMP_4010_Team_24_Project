@@ -338,7 +338,7 @@ def run(
             print(f"Running {algo_name} with {params_dict}")
 
             # Create folder Results/{timestamp}/algo_{name}_{k1}_{v1}_{k2}_{v2}
-            name = algo_name + "_".join(f"{k}_{v}" for k, v in params_dict.items())
+            name = f"{algo_name}_" + "_".join(f"{k}_{v}" for k, v in params_dict.items())
             save_dir = base_dir / name
             save_dir.mkdir(parents=True, exist_ok=True)
 
