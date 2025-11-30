@@ -6,19 +6,24 @@ gymnasium>=0.29.0
 numpy>=1.24.0
 pandas>=2.0.0
 
-# SUMO-RL (Install from GitHub)
-# sumo-rl @ git+https://github.com/LucasAlegre/sumo-rl.git
+# SUMO-RL (Install from GitHub or PyPI)
+sumo-rl>=1.4.3
 
-# SUMO Integration
+# SUMO Integration (usually installed with SUMO itself)
 traci>=1.15.0
 sumolib>=1.15.0
+
+# Deep Learning - PyTorch
+torch>=2.0.0
+torchvision>=0.15.0
+torchaudio>=2.0.0
 
 # Visualization
 matplotlib>=3.7.0
 seaborn>=0.12.0
 
+# Virtual Display for headless rendering (optional, for GUI-less environments)
+pyvirtualdisplay>=3.0
+
 # Type Hints
 typing-extensions>=4.5.0
-
-
-
