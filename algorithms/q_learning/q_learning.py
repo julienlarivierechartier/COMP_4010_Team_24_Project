@@ -11,17 +11,18 @@ class QLearningAgent(BaseAlgorithm):
     """
     def __init__(
         self,
-        obs_dim,
-        action_space,
-        lr=0.1,
-        gamma=0.99,
-        epsilon=1.0,
-        eps_decay=0.995,
-        eps_min=0.01,
+        env: gym.Env,
+        lr: float = 0.1,
+        gamma: float = 0.99,
+        epsilon: float = 1.0,
+        eps_decay: float = 0.995,
+        eps_min: float = 0.01,
         bins: int | list[int] = 10,
     ):
-        self.obs_dim = obs_dim
-        self.action_space = action_space
+        # environment info
+        self.env = env
+        self.obs_dim = env.observation_space.shape[0]
+        self.action_space = env.action_space.n
 
         # learning hyperparameters
         self.lr = lr
@@ -38,14 +39,16 @@ class QLearningAgent(BaseAlgorithm):
                 raise ValueError("bins length must match obs dim")
             self.bins_per_feature = np.array(bins, dtype=int)
 
-        # observation bounds for linear binning (they are initialized in set_env)
-        self.obs_low = None
-        self.obs_high = None
-        self.obs_range = None
-
+        # observation bounds for linear binning
+        self.obs_low = np.array(env.observation_space.low, dtype=np.float32)
+        self.obs_high = np.array(env.observation_space.high, dtype=np.float32)
+        self.obs_range = np.where(
+            (self.obs_high - self.obs_low) == 0,
+            1e-8,
+            self.obs_high - self.obs_low,
+        )
         # sparse Q-table: only store visited states
         self.q_table: dict[tuple, np.ndarray] = {}
-
 
     # helpers
     def _discretize(self, obs: np.ndarray) -> tuple:
@@ -80,8 +83,12 @@ class QLearningAgent(BaseAlgorithm):
 
     # BaseAlgorithm interface
     def reset(self):
-        #per-episode hook; keep decayed epsilon
+        # per-episode hook; keep decayed epsilon
         pass
+
+    def end_episode(self, training: bool = True) -> None:
+        if training:
+            self.decay()
 
     def select_action(self, obs, training: bool = True):
         state = self._discretize(obs)
@@ -91,20 +98,11 @@ class QLearningAgent(BaseAlgorithm):
         return int(np.argmax(q_values))
 
     def train_step(self, transition: tuple):
-        #transition = (state, action, reward, next_state, done)
+        # transition = (state, action, reward, next_state, done)
         obs, action, reward, next_obs, done = transition
         s = self._discretize(obs)
         ns = self._discretize(next_obs)
         self.update_q(s, action, reward, ns, done)
-        
-        # JLC: Maybe move this at the send of he episode? See the function I wrote below
-        self.decay()
-
-    def end_episode(self, training:bool):
-        # JLC: feel free to uncomment
-        """ if training:
-            self.decay() """
-        pass
 
     def save(self, path: Path | str):
         # turn sparse Q-table into a savable list
@@ -123,7 +121,7 @@ class QLearningAgent(BaseAlgorithm):
         )
 
     def load(self, path: Path | str):
-        #load Q-table and hyperparams
+        # load Q-table and hyperparams
         data = np.load(Path(path), allow_pickle=True)
         raw_table = data["q_table"]
         self.q_table = {tuple(state): values for state, values in raw_table}
@@ -141,25 +139,7 @@ class QLearningAgent(BaseAlgorithm):
             self.obs_high - self.obs_low,
         )
 
-    def set_env(self, env:gym.Env):
-        self.env = env 
-        self.obs_low = np.array(env.observation_space.low, dtype=np.float32)
-        self.obs_high = np.array(env.observation_space.high, dtype=np.float32)
-        self.obs_range = np.where(
-            (self.obs_high - self.obs_low) == 0,
-            1e-8,
-            self.obs_high - self.obs_low,
-        )
-        
-    def end_episode(self, training:bool):
-        """Do something at the end of episode (independent of reset)"""
-        pass
-
-# ------------------------------------
-# Testing the training independently
-# ------------------------------------
-
-
+# standalone test entry
 def train(agent: BaseAlgorithm, env: gym.Env, episodes=1000):
     for ep in range(episodes):
         obs, _ = env.reset()
@@ -170,18 +150,15 @@ def train(agent: BaseAlgorithm, env: gym.Env, episodes=1000):
         while not done:
             action = agent.select_action(obs, training=True)
             next_obs, reward, terminated, truncated, _ = env.step(action)
-
             agent.train_step((obs, action, reward, next_obs, terminated or truncated))
-
             obs = next_obs
             total_reward += reward
             done = terminated or truncated
+
+        agent.end_episode(training=True)
         print(f"Episode: {ep+1} Reward: {total_reward}")
 
 if __name__ == "__main__":
     env = gym.make(CUSTOM_ENV_ID)
-    obs_dim = env.observation_space.shape[0]
-    action_space = env.action_space.n
-    agent = QLearningAgent(obs_dim, action_space)
-    agent.set_env(env)
+    agent = QLearningAgent(env)
     train(agent, env)
