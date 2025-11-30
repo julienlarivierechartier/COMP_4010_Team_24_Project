@@ -210,7 +210,6 @@ class DQNAgent(BaseAlgorithm):
         pass
 
     def end_episode(self, training:bool):
-        """Do something at the end of episode (independent of reset)"""
+        """Decay epsilon at the end of training episode"""
         if training:
-            # Linear or exponential decay
             self.epsilon = max(self.epsilon_min, self.epsilon * self.epsilon_decay)
