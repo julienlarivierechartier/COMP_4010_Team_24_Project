@@ -273,7 +273,7 @@ def evaluate_algorithm(algo:BaseAlgorithm, route_file_indices:np.ndarray):
         "all_rewards": rewards,
         "per_episode_time_sec": episode_times,
         "total_eval_time_sec": total_eval_time,
-        "route_indices": route_file_indices,
+        "route_indices": route_file_indices.tolist(),
     }
 
 def run(
