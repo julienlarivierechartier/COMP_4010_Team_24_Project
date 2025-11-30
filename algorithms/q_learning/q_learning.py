@@ -7,7 +7,8 @@ from ..base import BaseAlgorithm
 
 class QLearningAgent(BaseAlgorithm):
     """
-    Tabular Q-learning with discretization: bin continuous obs to ints, then use a Q-table.
+    Tabular Q-learning with discretization: bin continuous obs to ints, then use a 
+    Q-table.
     """
     def __init__(
         self,
