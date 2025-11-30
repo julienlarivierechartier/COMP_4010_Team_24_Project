@@ -134,6 +134,12 @@ TRAINING_CONFIG = {
     "eval_episodes": 10
 }
 
+TRAINING_CONFIG = {
+    "train_episodes": 1,
+    "log_interval": 1,
+    "eval_episodes": 1
+}
+
 # Where to store the results
 RESULTS_ROOT = Path("Results")
 
@@ -188,8 +194,8 @@ def train_algorithm(algo: BaseAlgorithm, training_config:dict, save_dir: Path):
             obs = next_obs
             total_reward += reward
 
-        # Reset the algorithm at teh end of the episode
-        algo.reset()
+        # Call the end_episode method
+        algo.end_episode(training=True)
         
         # Properly close the env and garbage-collect it
         env.close()
@@ -249,6 +255,9 @@ def evaluate_algorithm(algo:BaseAlgorithm, route_file_indices:np.ndarray):
             obs, reward, done, truncated, _ = env.step(action)
             total += reward
 
+        # Call the end_episode method
+        algo.end_episode(training=False)
+        
         rewards.append(total)
         route_indices.append(index)
         ep_time = time.time() - ep_start

@@ -142,6 +142,10 @@ class QLearningAgent(BaseAlgorithm):
             1e-8,
             self.obs_high - self.obs_low,
         )
+        
+    def end_episode(self, training:bool):
+        """Do something at the end of episode (independent of reset)"""
+        pass
 
 # ------------------------------------
 # Testing the training independently

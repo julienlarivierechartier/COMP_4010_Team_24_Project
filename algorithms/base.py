@@ -42,3 +42,9 @@ class BaseAlgorithm(ABC):
         """Method to update the internal reference to a gym environment. This allows to 
         change the route file every episode."""
         pass
+
+    @abstractmethod
+    def end_episode(self, training:bool) -> None:
+        """Method to perform something at the end of teh episode (example update 
+        something, decay an epsilon)"""
+        pass

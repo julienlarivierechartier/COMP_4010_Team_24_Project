@@ -201,10 +201,18 @@ class PPOAgent(BaseAlgorithm):
         self.episode_rewards = []
 
     def reset(self):
-        # called at end of episode
-        # triggers PPO update
-        if self.ppo.buffer.size() > 0:
+        # called at beginning of episode
+        """JLC: moved the code to the "episode_end" function below to to prevent 
+        crashing when in eval mode."""
+        pass
+            
+    def end_episode(self, training:bool):
+        """Do something at the end of episode (independent of reset)"""
+        if training and self.ppo.buffer.size() > 0:
             self.ppo.update()
+        else:
+            # Just clear the buffer during evaluation
+            self.ppo.buffer.clear()
 
     def select_action(self, obs:np.ndarray, training:bool=True):
         # pick traffic light phase based on current state
@@ -252,3 +260,9 @@ class PPOAgent(BaseAlgorithm):
     
     def set_env(self, env):
         pass
+
+    def end_episode(self, training:bool) -> None:
+        if training:
+            self.ppo.update()
+        else:
+            self.ppo.buffer.clear()

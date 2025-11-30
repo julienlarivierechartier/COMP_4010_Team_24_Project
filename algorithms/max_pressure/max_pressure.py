@@ -41,3 +41,7 @@ class MaxPressureAgent(BaseAlgorithm):
 
     def set_env(self, env:gym.Env):
         self.env = env
+        
+    def end_episode(self, training:bool):
+        """Do something at the end of episode (independent of reset)"""
+        pass
