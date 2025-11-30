@@ -122,16 +122,44 @@ PARAM_GRID = {
 # }
 
 # ALGORITHMS = {
-#     "dqn": DQNAgent,
+#     "q_learning": PPOAgent,
 # }
 # PARAM_GRID = {
-#     "dqn": {
+#     "ppo": {
 #     }
 # }
 
+""" ALGORITHMS = {
+    "q_learning": QLearningAgent,
+}
+PARAM_GRID = {
+    "q_learning": {
+        "lr": [0.001],
+        "gamma": [0.95],
+        "epsilon": [1.0],
+        "eps_decay": [0.995],
+        "eps_min": [0.01],
+        "bins": [8],
+    },
+}
+"""
+ALGORITHMS = {
+    "dqn": DQNAgent,
+}
+PARAM_GRID = {
+    "dqn": {
+       "lr": [1e-3],
+       "gamma": [0.95],
+       "epsilon_start": [1.0],
+       "epsilon_min": [0.01],
+       "epsilon_decay": [0.995],
+       "batch_size": [64, 128],
+       "target_update_freq": [5, 10],
+   },
+}
 # Training parameters
 TRAINING_CONFIG = {
-    "train_episodes": NUM_EPISODES,
+    "train_episodes": 400,
     "log_interval": 1,
     "eval_episodes": 10
 }

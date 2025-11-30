@@ -45,7 +45,7 @@ FLOW_CONFIG = {
 
 def get_route_file_name(route_files_dir:Path, variation_index:int) -> Path:
     # Helper to get the route file name
-    return route_files_dir / f"routes_{variation_index:02d}.xml"
+    return route_files_dir / f"routes_{variation_index % NUM_EPISODES:02d}.xml"
 
 def generate_route_files(
     base_file: Path = BASE_ROUTE_FILE,
