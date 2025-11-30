@@ -96,7 +96,15 @@ class QLearningAgent(BaseAlgorithm):
         s = self._discretize(obs)
         ns = self._discretize(next_obs)
         self.update_q(s, action, reward, ns, done)
+        
+        # JLC: Maybe move this at the send of he episode? See the function I wrote below
         self.decay()
+
+    def end_episode(self, training:bool):
+        # JLC: feel free to uncomment
+        """ if training:
+            self.decay() """
+        pass
 
     def save(self, path: Path | str):
         # turn sparse Q-table into a savable list

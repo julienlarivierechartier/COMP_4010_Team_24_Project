@@ -65,7 +65,9 @@ PARAM_GRID = {
     "dqn": {
         "lr": [1e-3],
         "gamma": [0.95],
-        "epsilon": [0.05],
+        "epsilon_start": [1.0],
+        "epsilon_min": [0.01],
+        "epsilon_decay": [0.995],
         "batch_size": [64],
         "target_update_freq": [10],
     },
@@ -134,11 +136,12 @@ TRAINING_CONFIG = {
     "eval_episodes": 10
 }
 
-TRAINING_CONFIG = {
+# Quick dict to check if algo completes train and eval loops
+""" TRAINING_CONFIG = {
     "train_episodes": 1,
     "log_interval": 1,
     "eval_episodes": 1
-}
+} """
 
 # Where to store the results
 RESULTS_ROOT = Path("Results")

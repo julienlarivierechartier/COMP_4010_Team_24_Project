@@ -26,7 +26,9 @@ class DQNAgent(BaseAlgorithm):
         actions_dim:int,
         lr: float = 1e-3,
         gamma: float = 0.99,
-        epsilon:float = 0.1,
+        epsilon_start: float = 1.0,
+        epsilon_min: float = 0.01,
+        epsilon_decay: float = 0.995,
         buffer_capacity: float = 5000,
         batch_size: int = 64,
         target_update_freq: int = 10,
@@ -39,7 +41,9 @@ class DQNAgent(BaseAlgorithm):
             env: Gym environment (our CustomSumoEnvironment).
             lr: Gradient descent step size (alpha).
             gamma: Discount factor for future rewards.
-            epsilon: Sets when to exploit versus explore.
+            epsilon_start: Initial exploration rate.
+            epsilon_min: Minimum exploration rate (prevents too much decay).
+            epsilon_decay: Epsilon decay rate per episode.
             buffer_capacity: Maximum size of replay buffer.
             batch_size: Size of the mini-batches when sampling from buffer.
             target_update_freq: Number of main network updates before copying weights
@@ -60,8 +64,12 @@ class DQNAgent(BaseAlgorithm):
         self.gamma = gamma
         self.batch_size = batch_size
         self.target_update_freq = target_update_freq
-        self.epsilon = epsilon
-
+        
+        # Init the dynamic exploration parameters
+        self.epsilon = epsilon_start
+        self.epsilon_min = epsilon_min
+        self.epsilon_decay = epsilon_decay
+        
         # Initialize the empty replay buffer with the given capacity
         self.replay_buffer = ReplayBuffer(buffer_capacity)
 
@@ -203,4 +211,6 @@ class DQNAgent(BaseAlgorithm):
 
     def end_episode(self, training:bool):
         """Do something at the end of episode (independent of reset)"""
-        pass
+        if training:
+            # Linear or exponential decay
+            self.epsilon = max(self.epsilon_min, self.epsilon * self.epsilon_decay)
