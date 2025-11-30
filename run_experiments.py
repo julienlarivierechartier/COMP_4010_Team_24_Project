@@ -74,9 +74,9 @@ PARAM_GRID = {
     "q_learning": {
         "lr": [0.001,0.05,0.1],
         "gamma": [0.95,0.99],
-        "epsilon": [1.0],
-        "eps_decay": [0.995],
-        "eps_min": [0.01],
+        "epsilon": [0.7],
+        "eps_decay": [0.92],
+        "eps_min": [0.05],
         "bins": [8, 16],
     },
     "random": {
