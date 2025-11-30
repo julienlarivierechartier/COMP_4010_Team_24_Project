@@ -97,15 +97,11 @@ class QLearningAgent(BaseAlgorithm):
         s = self._discretize(obs)
         ns = self._discretize(next_obs)
         self.update_q(s, action, reward, ns, done)
-        
-        # JLC: Maybe move this at the send of he episode? See the function I wrote below
-        self.decay()
 
     def end_episode(self, training:bool):
-        # JLC: feel free to uncomment
-        """ if training:
-            self.decay() """
-        pass
+        # Decay at the end of episode
+        if training:
+            self.decay()
 
     def save(self, path: Path | str):
         # turn sparse Q-table into a savable list
@@ -151,10 +147,7 @@ class QLearningAgent(BaseAlgorithm):
             1e-8,
             self.obs_high - self.obs_low,
         )
-        
-    def end_episode(self, training:bool):
-        """Do something at the end of episode (independent of reset)"""
-        pass
+
 
 # ------------------------------------
 # Testing the training independently
@@ -177,6 +170,7 @@ def train(agent: BaseAlgorithm, env: gym.Env, episodes=1000):
             obs = next_obs
             total_reward += reward
             done = terminated or truncated
+        agent.end_episode(training=True)
         print(f"Episode: {ep+1} Reward: {total_reward}")
 
 if __name__ == "__main__":
