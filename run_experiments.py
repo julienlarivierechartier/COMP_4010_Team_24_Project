@@ -26,6 +26,7 @@ from custom_env import CUSTOM_ENV_ID
 from generate_route_files import (
     NUM_EPISODES, 
     ASSYMETRIC_ROUTES_DIR, 
+    BIASED_ROUTES_DIR,
     BASE_ROUTE_FILE,
     get_route_file_name,
 )
@@ -87,15 +88,15 @@ PARAM_GRID = {
 
 # """Redifinition with minimal config (just for internal testing without deleting the 
 # above ones). Comment all the ones you dont want to test and keep the one you need."""
-# ALGORITHMS = {
-#     "max_pressure": MaxPressureAgent,
-    
-# }
-# PARAM_GRID = {
-#     "max_pressure": {
-#         "ped_wait_weight": [1]
-#     },
-# }
+ALGORITHMS = {
+    "max_pressure": MaxPressureAgent,
+  
+}
+PARAM_GRID = {
+    "max_pressure": {
+        "ped_wait_weight": [1]
+    },
+}
 
 # ALGORITHMS = {
 #     "random": RandomAgent,
@@ -121,15 +122,7 @@ PARAM_GRID = {
 #     }
 # }
 
-# ALGORITHMS = {
-#     "q_learning": PPOAgent,
-# }
-# PARAM_GRID = {
-#     "ppo": {
-#     }
-# }
-
-""" ALGORITHMS = {
+ALGORITHMS = {
     "q_learning": QLearningAgent,
 }
 PARAM_GRID = {
@@ -142,7 +135,7 @@ PARAM_GRID = {
         "bins": [8],
     },
 }
-"""
+
 ALGORITHMS = {
     "dqn": DQNAgent,
 }
@@ -161,7 +154,9 @@ PARAM_GRID = {
 TRAINING_CONFIG = {
     "train_episodes": 400,
     "log_interval": 1,
-    "eval_episodes": 10
+    "eval_episodes": 10,
+    "route_files_dir": BIASED_ROUTES_DIR,
+    #"route_file_dir": ASSYMETRIC_ROUTES_DIR,
 }
 
 # Quick dict to check if algo completes train and eval loops
@@ -204,7 +199,7 @@ def train_algorithm(algo: BaseAlgorithm, training_config:dict, save_dir: Path):
     for episode in range(training_config["train_episodes"]):
         
         # Set the route file when creating the env, update the env in the algo object
-        route_file_path = get_route_file_name(ASSYMETRIC_ROUTES_DIR, episode)
+        route_file_path = get_route_file_name(training_config["route_files_dir"], episode)
         env = init_env(algo, route_file_path, SUMO_SEED)
         algo.set_env(env)
         
@@ -255,7 +250,7 @@ def train_algorithm(algo: BaseAlgorithm, training_config:dict, save_dir: Path):
     }
 
 
-def evaluate_algorithm(algo:BaseAlgorithm, route_file_indices:np.ndarray):
+def evaluate_algorithm(algo:BaseAlgorithm, training_config:dict, route_file_indices:np.ndarray):
     """Function to evaluate the algorithm performance. This function loads the route 
     files at the given route_file_indices such that all algorithms are tested on the 
     same route files."""
@@ -271,7 +266,7 @@ def evaluate_algorithm(algo:BaseAlgorithm, route_file_indices:np.ndarray):
         ep_start = time.time()
         
         # Set the route file when creating the env, update the env in the algo object
-        route_file_path = get_route_file_name(ASSYMETRIC_ROUTES_DIR, route_file_index)
+        route_file_path = get_route_file_name(training_config["route_files_dir"], route_file_index)
         env = init_env(algo, route_file_path, SUMO_SEED)
         algo.set_env(env)
         
@@ -290,7 +285,7 @@ def evaluate_algorithm(algo:BaseAlgorithm, route_file_indices:np.ndarray):
         algo.end_episode(training=False)
         
         rewards.append(total)
-        route_indices.append(index)
+        route_indices.append(route_file_index)
         ep_time = time.time() - ep_start
         episode_times.append(ep_time)
         
