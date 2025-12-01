@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Algorithm Performance Summary</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: white;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: black;
+        }
+        table {
+            border-collapse: collapse;
+            margin: 20px auto;
+            background-color: white;
+            width: 90%;
+            max-width: 1200px;
+        }
+        th {
+            background-color: white;
+            color: black;
+            padding: 12px;
+            text-align: left;
+            font-weight: bold;
+            border: 1px solid black;
+        }
+        td {
+            padding: 10px 12px;
+            border: 1px solid black;
+        }
+        .number {
+            text-align: right;
+        }
+        .config {
+            font-size: 11px;
+            max-width: 400px;
+            word-break: break-word;
+        }
+        p {
+            text-align: center;
+            margin-top: 30px;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <h1>Algorithm Performance Summary</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Algorithm</th>
+                <th>Configuration</th>
+                <th class="number">Min Reward</th>
+                <th class="number">Max Reward</th>
+                <th class="number">Avg Reward</th>
+                <th class="number">Std Dev</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>1</strong></td>
+                <td><strong>PPO</strong></td>
+                <td class="config">ppo_lr_0.0003_gamma_0.99_clip_0.2_gae_lambda_0.95_K_10_entropy_coef_0.02</td>
+                <td class="number">-436.18</td>
+                <td class="number">-206.28</td>
+                <td class="number">-307.08</td>
+                <td class="number">78.53</td>
+            </tr>
+            <tr>
+                <td><strong>2</strong></td>
+                <td><strong>RANDOM</strong></td>
+                <td class="config">random_</td>
+                <td class="number">-519.31</td>
+                <td class="number">-303.85</td>
+                <td class="number">-403.45</td>
+                <td class="number">76.36</td>
+            </tr>
+            <tr>
+                <td><strong>3</strong></td>
+                <td><strong>FIXED_TIME</strong></td>
+                <td class="config">fixed_time_</td>
+                <td class="number">-519.55</td>
+                <td class="number">-304.09</td>
+                <td class="number">-411.26</td>
+                <td class="number">73.67</td>
+            </tr>
+            <tr>
+                <td><strong>4</strong></td>
+                <td><strong>MAX_PRESSURE</strong></td>
+                <td class="config">max_pressure_ped_wait_weight_1.5</td>
+                <td class="number">-529.03</td>
+                <td class="number">-310.84</td>
+                <td class="number">-427.04</td>
+                <td class="number">76.99</td>
+            </tr>
+            <tr>
+                <td><strong>5</strong></td>
+                <td><strong>DQN</strong></td>
+                <td class="config">dqn_lr_0.001_gamma_0.95_epsilon_start_1.0_epsilon_min_0.01_epsilon_decay_0.995_batch_size_64_target_update_freq_5</td>
+                <td class="number">-1213.44</td>
+                <td class="number">-408.50</td>
+                <td class="number">-674.41</td>
+                <td class="number">276.62</td>
+            </tr>
+            <tr>
+                <td><strong>6</strong></td>
+                <td><strong>Q_LEARNING</strong></td>
+                <td class="config">q_learning_lr_0.001_gamma_0.95_epsilon_0.7_eps_decay_0.92_eps_min_0.05_bins_16</td>
+                <td class="number">-3279.98</td>
+                <td class="number">-701.82</td>
+                <td class="number">-1746.91</td>
+                <td class="number">744.75</td>
+            </tr>
+        </tbody>
+    </table>
+    <p>
+        Generated from Results/20251201_005709<br>
+        Higher reward values indicate better performance
+    </p>
+</body>
+</html>
