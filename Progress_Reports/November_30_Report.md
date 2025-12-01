@@ -1,17 +1,17 @@
-# Team 24 Progress Report - October 30th, 2025
+# Team 24 Progress Report - November 30th, 2025
 
 ## Member Contributions
 
 - ### Julien Larivière-Chartier:
     - **Last 2 weeks:** 
-- I implemented fixed time and random baselines by wrapping them with `BaseAlgorithm`.(commits: 1f379f7aef2d44035c21c0ba3b6cd3436f0e50e6, 3d3afd1405c0ed4cfa870c10f5a300d78f313ca5, 91a7252eb116a86a7b15bc83dfd1097eb46e8e45)
-- I helped teammates to conform to `BaseAlgorithm` interface (commits: 
-41e41bd4ccb5bd8298db06883534ecc3d9b61537,
-dafa2b37e54a4ebf0e272aafb188d44c86ff88d8 )
-- I implemented a DQN agent with a decaying epsilon. (commits: 3d3afd1405c0ed4cfa870c10f5a300d78f313ca5, b7c8bd5a9274478eb9b615a62d29d0465696e241)
-- After a few trials, I noticed that baselines outperformed the RL agents and that it could be due to the same amount of traffic coming from each direction not providing diverse enough patterns for RL to learn something useful. Consequently, randomly assigning traffic phases is more effective than greedy action in the long run. To mitigate this, I wrote a script to generate route files programmatically to provide more diverse data for training and evaluation hoping that the RL agents would learn useful patterns and would beat randomness. I had to modify `run_experiments.py` and `BaseAlgorithm` to allow using these new route files because setting the route involves instantiating a new `gym.Env` every time (agents needed to be able to update their internal reference to `gym.Env`). (commits: 2efc06694d6013bcbee5ecf8a7ca25a04d908a25,
-d3461420e1381fbd8013ce3841d89f483499cfe3)
-- I wrote hyperparameter grids for the diverse algorithms and baselines and ran the code training and evaluating all algorithms and baselines with many hyperparameter combinations. I ran this overnight for results to be ready for the Results Demo (December 1st). (commits: ae3bff32fac268d426cd05a53be6fa269bc1f557, 6c6683f7262ef071a2ff33831cfdb52bfaf18088)
+        - I implemented fixed time and random baselines by wrapping them with `BaseAlgorithm`.(commits: 1f379f7aef2d44035c21c0ba3b6cd3436f0e50e6, 3d3afd1405c0ed4cfa870c10f5a300d78f313ca5, 91a7252eb116a86a7b15bc83dfd1097eb46e8e45)
+        - I helped teammates to conform to `BaseAlgorithm` interface (commits: 
+        41e41bd4ccb5bd8298db06883534ecc3d9b61537,
+        dafa2b37e54a4ebf0e272aafb188d44c86ff88d8 )
+        - I implemented a DQN agent with a decaying epsilon. (commits: 3d3afd1405c0ed4cfa870c10f5a300d78f313ca5, b7c8bd5a9274478eb9b615a62d29d0465696e241)
+        - After a few trials, I noticed that baselines outperformed the RL agents and that it could be due to the same amount of traffic coming from each direction not providing diverse enough patterns for RL to learn something useful. Consequently, randomly assigning traffic phases is more effective than greedy action in the long run. To mitigate this, I wrote a script to generate route files programmatically to provide more diverse data for training and evaluation hoping that the RL agents would learn useful patterns and would beat randomness. I had to modify `run_experiments.py` and `BaseAlgorithm` to allow using these new route files because setting the route involves instantiating a new `gym.Env` every time (agents needed to be able to update their internal reference to `gym.Env`). (commits: 2efc06694d6013bcbee5ecf8a7ca25a04d908a25,
+        d3461420e1381fbd8013ce3841d89f483499cfe3)
+        - I wrote hyperparameter grids for the diverse algorithms and baselines and ran the code training and evaluating all algorithms and baselines with many hyperparameter combinations. I ran this overnight for results to be ready for the Results Demo (December 1st). (commits: ae3bff32fac268d426cd05a53be6fa269bc1f557, 6c6683f7262ef071a2ff33831cfdb52bfaf18088)
     - **Next week:** Finish documenting the code and work on a Readme to explain to the TA how to run/test the code. Work on the report: I would like to write about the `BaseAlgorithm` interface definition and how it allowed `run_experiments.py` to follow a structured approach to train and evaluate the different algorithms. I will write about the DQN RL algorithm and about fixed time and the random baselines. I will also write about the route files that were generated to allow the algorithms to learn from diversified episodes corresponding to specific traffic scenarios.
 
 - ### Gator Guo:

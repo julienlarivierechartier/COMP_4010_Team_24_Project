@@ -88,7 +88,7 @@ PARAM_GRID = {
 
 # """Redifinition with minimal config (just for internal testing without deleting the 
 # above ones). Comment all the ones you dont want to test and keep the one you need."""
-ALGORITHMS = {
+""" ALGORITHMS = {
     "max_pressure": MaxPressureAgent,
   
 }
@@ -96,7 +96,7 @@ PARAM_GRID = {
     "max_pressure": {
         "ped_wait_weight": [1]
     },
-}
+} """
 
 # ALGORITHMS = {
 #     "random": RandomAgent,
@@ -152,7 +152,7 @@ PARAM_GRID = {
 } """
 # Training parameters
 TRAINING_CONFIG = {
-    "train_episodes": 400,
+    "train_episodes": 100,
     "log_interval": 1,
     "eval_episodes": 10,
     "route_files_dir": BIASED_ROUTES_DIR,

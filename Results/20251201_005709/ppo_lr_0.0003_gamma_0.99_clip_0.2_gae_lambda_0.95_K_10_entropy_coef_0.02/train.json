@@ -1,0 +1,505 @@
+{
+    "episode_metrics": [
+        {
+            "episode": 0,
+            "reward": -516.5100000000003,
+            "duration_sec": 8.957754135131836
+        },
+        {
+            "episode": 1,
+            "reward": -406.9199999999999,
+            "duration_sec": 7.978404998779297
+        },
+        {
+            "episode": 2,
+            "reward": -399.2200000000001,
+            "duration_sec": 8.956814527511597
+        },
+        {
+            "episode": 3,
+            "reward": -374.5199999999993,
+            "duration_sec": 9.618826866149902
+        },
+        {
+            "episode": 4,
+            "reward": -531.9099999999999,
+            "duration_sec": 9.72490382194519
+        },
+        {
+            "episode": 5,
+            "reward": -348.43000000000035,
+            "duration_sec": 8.453983306884766
+        },
+        {
+            "episode": 6,
+            "reward": -289.7199999999998,
+            "duration_sec": 9.290002822875977
+        },
+        {
+            "episode": 7,
+            "reward": -501.39000000000055,
+            "duration_sec": 9.715007781982422
+        },
+        {
+            "episode": 8,
+            "reward": -289.25,
+            "duration_sec": 9.625531435012817
+        },
+        {
+            "episode": 9,
+            "reward": -445.7600000000001,
+            "duration_sec": 9.558071374893188
+        },
+        {
+            "episode": 10,
+            "reward": -244.1500000000003,
+            "duration_sec": 8.796082258224487
+        },
+        {
+            "episode": 11,
+            "reward": -339.2799999999996,
+            "duration_sec": 8.386922359466553
+        },
+        {
+            "episode": 12,
+            "reward": -355.71999999999986,
+            "duration_sec": 9.89813232421875
+        },
+        {
+            "episode": 13,
+            "reward": -316.8599999999999,
+            "duration_sec": 8.566776037216187
+        },
+        {
+            "episode": 14,
+            "reward": -549.6999999999997,
+            "duration_sec": 10.220194101333618
+        },
+        {
+            "episode": 15,
+            "reward": -420.00000000000045,
+            "duration_sec": 8.798289060592651
+        },
+        {
+            "episode": 16,
+            "reward": -452.19999999999953,
+            "duration_sec": 9.772200584411621
+        },
+        {
+            "episode": 17,
+            "reward": -479.2999999999997,
+            "duration_sec": 9.84899115562439
+        },
+        {
+            "episode": 18,
+            "reward": -357.7799999999998,
+            "duration_sec": 8.678350925445557
+        },
+        {
+            "episode": 19,
+            "reward": -424.7600000000002,
+            "duration_sec": 8.66065263748169
+        },
+        {
+            "episode": 20,
+            "reward": -396.19,
+            "duration_sec": 9.458903551101685
+        },
+        {
+            "episode": 21,
+            "reward": -571.8100000000002,
+            "duration_sec": 10.094574213027954
+        },
+        {
+            "episode": 22,
+            "reward": -1599.8099999999997,
+            "duration_sec": 10.81275725364685
+        },
+        {
+            "episode": 23,
+            "reward": -401.12999999999994,
+            "duration_sec": 9.535799264907837
+        },
+        {
+            "episode": 24,
+            "reward": -381.7499999999999,
+            "duration_sec": 8.869127035140991
+        },
+        {
+            "episode": 25,
+            "reward": -439.9700000000003,
+            "duration_sec": 8.828872680664062
+        },
+        {
+            "episode": 26,
+            "reward": -533.6300000000005,
+            "duration_sec": 8.965861320495605
+        },
+        {
+            "episode": 27,
+            "reward": -391.82000000000033,
+            "duration_sec": 8.828392267227173
+        },
+        {
+            "episode": 28,
+            "reward": -413.27,
+            "duration_sec": 10.465596437454224
+        },
+        {
+            "episode": 29,
+            "reward": -452.5399999999999,
+            "duration_sec": 11.385465860366821
+        },
+        {
+            "episode": 30,
+            "reward": -346.6599999999999,
+            "duration_sec": 9.92710280418396
+        },
+        {
+            "episode": 31,
+            "reward": -197.8600000000001,
+            "duration_sec": 9.449196577072144
+        },
+        {
+            "episode": 32,
+            "reward": -438.52000000000055,
+            "duration_sec": 9.669419050216675
+        },
+        {
+            "episode": 33,
+            "reward": -230.58000000000018,
+            "duration_sec": 8.087595462799072
+        },
+        {
+            "episode": 34,
+            "reward": -343.6000000000002,
+            "duration_sec": 10.114646196365356
+        },
+        {
+            "episode": 35,
+            "reward": -464.3500000000003,
+            "duration_sec": 9.338227272033691
+        },
+        {
+            "episode": 36,
+            "reward": -469.10000000000053,
+            "duration_sec": 9.263671875
+        },
+        {
+            "episode": 37,
+            "reward": -341.23999999999995,
+            "duration_sec": 8.85693097114563
+        },
+        {
+            "episode": 38,
+            "reward": -261.6600000000001,
+            "duration_sec": 8.758480072021484
+        },
+        {
+            "episode": 39,
+            "reward": -350.15,
+            "duration_sec": 9.108822345733643
+        },
+        {
+            "episode": 40,
+            "reward": -499.92999999999967,
+            "duration_sec": 8.672514915466309
+        },
+        {
+            "episode": 41,
+            "reward": -706.0400000000001,
+            "duration_sec": 8.366830348968506
+        },
+        {
+            "episode": 42,
+            "reward": -490.08000000000055,
+            "duration_sec": 8.560723066329956
+        },
+        {
+            "episode": 43,
+            "reward": -365.4899999999999,
+            "duration_sec": 7.3699631690979
+        },
+        {
+            "episode": 44,
+            "reward": -349.75999999999965,
+            "duration_sec": 9.300097942352295
+        },
+        {
+            "episode": 45,
+            "reward": -337.1499999999997,
+            "duration_sec": 9.88716721534729
+        },
+        {
+            "episode": 46,
+            "reward": -470.7100000000004,
+            "duration_sec": 10.434264183044434
+        },
+        {
+            "episode": 47,
+            "reward": -297.7900000000005,
+            "duration_sec": 9.879828214645386
+        },
+        {
+            "episode": 48,
+            "reward": -339.01,
+            "duration_sec": 8.825941801071167
+        },
+        {
+            "episode": 49,
+            "reward": -308.84,
+            "duration_sec": 9.354657173156738
+        },
+        {
+            "episode": 50,
+            "reward": -351.1799999999998,
+            "duration_sec": 10.137900114059448
+        },
+        {
+            "episode": 51,
+            "reward": -1267.6499999999994,
+            "duration_sec": 8.762742042541504
+        },
+        {
+            "episode": 52,
+            "reward": -313.43999999999977,
+            "duration_sec": 9.063308477401733
+        },
+        {
+            "episode": 53,
+            "reward": -329.2500000000005,
+            "duration_sec": 9.226745367050171
+        },
+        {
+            "episode": 54,
+            "reward": -488.21999999999986,
+            "duration_sec": 9.41279125213623
+        },
+        {
+            "episode": 55,
+            "reward": -251.94000000000008,
+            "duration_sec": 8.471366882324219
+        },
+        {
+            "episode": 56,
+            "reward": -228.2000000000001,
+            "duration_sec": 7.867716073989868
+        },
+        {
+            "episode": 57,
+            "reward": -428.65999999999974,
+            "duration_sec": 10.133017539978027
+        },
+        {
+            "episode": 58,
+            "reward": -193.95000000000027,
+            "duration_sec": 8.353826999664307
+        },
+        {
+            "episode": 59,
+            "reward": -352.23000000000025,
+            "duration_sec": 9.864290952682495
+        },
+        {
+            "episode": 60,
+            "reward": -282.6399999999997,
+            "duration_sec": 9.937390089035034
+        },
+        {
+            "episode": 61,
+            "reward": -251.24999999999991,
+            "duration_sec": 9.020941257476807
+        },
+        {
+            "episode": 62,
+            "reward": -197.84999999999994,
+            "duration_sec": 8.212246179580688
+        },
+        {
+            "episode": 63,
+            "reward": -258.5199999999999,
+            "duration_sec": 7.9963157176971436
+        },
+        {
+            "episode": 64,
+            "reward": -454.48000000000036,
+            "duration_sec": 10.451536178588867
+        },
+        {
+            "episode": 65,
+            "reward": -384.4500000000001,
+            "duration_sec": 9.871727705001831
+        },
+        {
+            "episode": 66,
+            "reward": -350.6300000000002,
+            "duration_sec": 9.622918128967285
+        },
+        {
+            "episode": 67,
+            "reward": -392.22000000000025,
+            "duration_sec": 9.947984457015991
+        },
+        {
+            "episode": 68,
+            "reward": -273.97000000000037,
+            "duration_sec": 9.868788003921509
+        },
+        {
+            "episode": 69,
+            "reward": -300.96,
+            "duration_sec": 7.920490264892578
+        },
+        {
+            "episode": 70,
+            "reward": -359.36999999999995,
+            "duration_sec": 9.817289352416992
+        },
+        {
+            "episode": 71,
+            "reward": -505.0999999999997,
+            "duration_sec": 9.776835680007935
+        },
+        {
+            "episode": 72,
+            "reward": -441.06000000000006,
+            "duration_sec": 10.32757306098938
+        },
+        {
+            "episode": 73,
+            "reward": -372.29999999999984,
+            "duration_sec": 10.156631231307983
+        },
+        {
+            "episode": 74,
+            "reward": -324.84999999999997,
+            "duration_sec": 9.066741943359375
+        },
+        {
+            "episode": 75,
+            "reward": -371.88000000000005,
+            "duration_sec": 9.570555686950684
+        },
+        {
+            "episode": 76,
+            "reward": -419.9800000000003,
+            "duration_sec": 8.77308964729309
+        },
+        {
+            "episode": 77,
+            "reward": -299.3900000000006,
+            "duration_sec": 9.273839950561523
+        },
+        {
+            "episode": 78,
+            "reward": -369.74999999999983,
+            "duration_sec": 9.632804870605469
+        },
+        {
+            "episode": 79,
+            "reward": -412.94,
+            "duration_sec": 9.997081995010376
+        },
+        {
+            "episode": 80,
+            "reward": -315.58000000000004,
+            "duration_sec": 9.15721082687378
+        },
+        {
+            "episode": 81,
+            "reward": -161.46999999999997,
+            "duration_sec": 9.417988777160645
+        },
+        {
+            "episode": 82,
+            "reward": -414.30999999999983,
+            "duration_sec": 9.814220905303955
+        },
+        {
+            "episode": 83,
+            "reward": -225.3200000000002,
+            "duration_sec": 8.306153774261475
+        },
+        {
+            "episode": 84,
+            "reward": -303.5900000000002,
+            "duration_sec": 10.342601537704468
+        },
+        {
+            "episode": 85,
+            "reward": -400.5600000000003,
+            "duration_sec": 9.274142265319824
+        },
+        {
+            "episode": 86,
+            "reward": -432.7499999999998,
+            "duration_sec": 9.579071998596191
+        },
+        {
+            "episode": 87,
+            "reward": -332.4000000000001,
+            "duration_sec": 10.671580076217651
+        },
+        {
+            "episode": 88,
+            "reward": -1984.7800000000063,
+            "duration_sec": 12.0287606716156
+        },
+        {
+            "episode": 89,
+            "reward": -325.82999999999987,
+            "duration_sec": 9.840935945510864
+        },
+        {
+            "episode": 90,
+            "reward": -438.4999999999998,
+            "duration_sec": 9.128500938415527
+        },
+        {
+            "episode": 91,
+            "reward": -405.50999999999976,
+            "duration_sec": 9.521904468536377
+        },
+        {
+            "episode": 92,
+            "reward": -447.50000000000045,
+            "duration_sec": 9.555649518966675
+        },
+        {
+            "episode": 93,
+            "reward": -306.6599999999997,
+            "duration_sec": 8.16870665550232
+        },
+        {
+            "episode": 94,
+            "reward": -347.24999999999983,
+            "duration_sec": 9.845890760421753
+        },
+        {
+            "episode": 95,
+            "reward": -323.4900000000001,
+            "duration_sec": 9.85465407371521
+        },
+        {
+            "episode": 96,
+            "reward": -412.67,
+            "duration_sec": 11.081620216369629
+        },
+        {
+            "episode": 97,
+            "reward": -263.8600000000002,
+            "duration_sec": 9.495274782180786
+        },
+        {
+            "episode": 98,
+            "reward": -333.3200000000003,
+            "duration_sec": 8.778034448623657
+        },
+        {
+            "episode": 99,
+            "reward": -292.00999999999976,
+            "duration_sec": 9.149925470352173
+        }
+    ],
+    "total_training_time_sec": 939.6150121688843
+}
