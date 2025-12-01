@@ -69,11 +69,11 @@ PARAM_GRID = {
         "epsilon_start": [1.0],
         "epsilon_min": [0.01],
         "epsilon_decay": [0.995],
-        "batch_size": [32,64],
-        "target_update_freq": [10,20],
+        "batch_size": [64, 128],
+        "target_update_freq": [5,10],
     },
     "q_learning": {
-        "lr": [0.001,0.05,0.1],
+        "lr": [0.001],
         "gamma": [0.95,0.99],
         "epsilon": [0.7],
         "eps_decay": [0.92],
@@ -122,7 +122,7 @@ PARAM_GRID = {
 #     }
 # }
 
-ALGORITHMS = {
+""" ALGORITHMS = {
     "q_learning": QLearningAgent,
 }
 PARAM_GRID = {
@@ -149,7 +149,7 @@ PARAM_GRID = {
        "batch_size": [64, 128],
        "target_update_freq": [5, 10],
    },
-}
+} """
 # Training parameters
 TRAINING_CONFIG = {
     "train_episodes": 400,
@@ -375,7 +375,7 @@ def run(
                 
             # Train and log the metrics (always close the env)
             train_metrics = train_algorithm(algo, current_train_config, save_dir)
-            eval_metrics = evaluate_algorithm(algo, route_file_indices)
+            eval_metrics = evaluate_algorithm(algo, route_file_indices, route_file_indices)
             
             # Save JSON logs
             save_json(train_metrics, save_dir / "train.json")
