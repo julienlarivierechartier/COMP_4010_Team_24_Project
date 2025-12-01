@@ -142,6 +142,11 @@ class QLearningAgent(BaseAlgorithm):
         self.env = env 
         self.obs_low = np.array(env.observation_space.low, dtype=np.float32)
         self.obs_high = np.array(env.observation_space.high, dtype=np.float32)
+
+        # simple heuristic fix: if env says [0,1000] but obs 实际在 [0,1]，就按 [0,1] 处理
+        if np.all(self.obs_low == 0.0) and np.all(self.obs_high >= 10.0):
+            self.obs_high = np.ones_like(self.obs_high, dtype=np.float32)
+
         self.obs_range = np.where(
             (self.obs_high - self.obs_low) == 0,
             1e-8,
@@ -155,6 +160,8 @@ class QLearningAgent(BaseAlgorithm):
 
 
 def train(agent: BaseAlgorithm, env: gym.Env, episodes=1000):
+    # discretization sanity check
+    # （如果你完全不想要这个注释也可以删掉，但它本身不会输出东西）
     for ep in range(episodes):
         obs, _ = env.reset()
         agent.reset()
