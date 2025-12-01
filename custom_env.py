@@ -35,7 +35,7 @@ object initialization)"""
 START_SIMULATION_DELAY = 2
 
 # Weight for pedestrian waiting time in pressure calculation
-DEFAULT_PED_WAIT_WEIGHT = 0.1
+DEAFULT_PED_WAIT_WEIGHT = 0.1
 
 # Default pedestrian crossing distance in meters
 DEFAULT_CROSSING_DISTANCE = 16.0  # meters
@@ -143,7 +143,7 @@ class CustomTrafficSignal(TrafficSignal):
         reward_fn: Union[str, Callable, list],
         reward_weights: list[float],
         sumo,
-        ped_wait_weight: float = DEFAULT_PED_WAIT_WEIGHT,
+        ped_wait_weight: float = DEAFULT_PED_WAIT_WEIGHT,
     ):
         """Initializes a TrafficSignal object.
 
