@@ -18,6 +18,8 @@ from sumo_rl.environment.env import (
 import sumolib
 import traci
 import time
+import xml.etree.ElementTree as ET
+from pathlib import Path
 from typing import Union, Optional
 from typing_extensions import Callable
 # Id of the custom environment registered to Gymnasium API
@@ -33,7 +35,96 @@ object initialization)"""
 START_SIMULATION_DELAY = 2
 
 # Weight for pedestrian waiting time in pressure calculation
-DEAFULT_PED_WAIT_WEIGHT = 0.1
+DEFAULT_PED_WAIT_WEIGHT = 0.1
+
+# Default pedestrian crossing distance in meters
+DEFAULT_CROSSING_DISTANCE = 16.0  # meters
+
+# Yellow_time (3s) is the main buffer for pedestrians crossing
+# We don't add this to min_green calculation to avoid double-buffering
+PEDESTRIAN_SAFETY_MARGIN = 0.5  # seconds - only used in runtime safety checks, not min_green calc
+
+
+def get_pedestrian_speed_from_route_file(route_file_path: str) -> float:
+    """
+    Reads the pedestrian desiredMaxSpeed from a route file.
+    Returns the speed in m/s, or a default value if not found.
+    """
+    try:
+        tree = ET.parse(route_file_path)
+        root = tree.getroot()
+        
+        # Look for vType with id="pedestrian" or vClass="pedestrian"
+        for vtype in root.findall('.//vType'):
+            vclass = vtype.get('vClass', '')
+            if vclass == 'pedestrian':
+                speed_str = vtype.get('desiredMaxSpeed')
+                if speed_str:
+                    return float(speed_str)
+        
+        # If not found, return default (standard pedestrian speed)
+        return 2.0  # m/s - standard pedestrian speed in route files
+    except Exception as e:
+        print(f"Warning: Could not read pedestrian speed from {route_file_path}: {e}")
+        return 2.0  # Default to standard pedestrian speed
+
+
+def calculate_min_green_time(
+    crossing_distance: float,
+    pedestrian_speed: float,
+    safety_margin: float = PEDESTRIAN_SAFETY_MARGIN,
+    yellow_time: int = 3
+) -> int:
+    """
+    Calculates the minimum green time needed for pedestrians to cross safely.
+    min_green is set to crossing_time + minimal safety_margin.
+    Yellow_time (3s) serves as the main buffer/slack for pedestrians still crossing.
+    
+    Args:
+        crossing_distance: Distance to cross in meters
+        pedestrian_speed: Pedestrian walking speed in m/s
+        safety_margin: Minimal safety margin in seconds (yellow_time is the main buffer)
+        yellow_time: Yellow phase duration in seconds (used for info, not calculation)
+    
+    Returns:
+        Minimum green time in seconds (rounded up to nearest integer)
+    """
+    if pedestrian_speed <= 0:
+        # Default to 2.0 m/s which is the standard pedestrian speed in route files
+        pedestrian_speed = 2.0
+    
+    crossing_time = crossing_distance / pedestrian_speed
+    
+    # min_green = crossing_time (yellow_time provides the buffer)
+    # Yellow_time (3s) is the buffer - provides slack for pedestrians still crossing
+    # We don't add safety_margin here to avoid double-buffering
+    min_green = int(np.ceil(crossing_time))
+    
+    # Ensure minimum is at least 5 seconds for basic traffic flow
+    return max(min_green, 5)
+
+
+def get_crossing_distance_from_network(net_file_path: str) -> float:
+    """
+    Reads the crossing distance from the network file.
+    Returns the length of the first crossing edge found, or default.
+    """
+    try:
+        tree = ET.parse(net_file_path)
+        root = tree.getroot()
+        
+        # Look for edges with function="crossing"
+        for edge in root.findall('.//edge'):
+            if edge.get('function') == 'crossing':
+                for lane in edge.findall('.//lane'):
+                    length_str = lane.get('length')
+                    if length_str:
+                        return float(length_str)
+        
+        return DEFAULT_CROSSING_DISTANCE
+    except Exception as e:
+        print(f"Warning: Could not read crossing distance from {net_file_path}: {e}")
+        return DEFAULT_CROSSING_DISTANCE
 
 class CustomTrafficSignal(TrafficSignal):
     
@@ -52,7 +143,7 @@ class CustomTrafficSignal(TrafficSignal):
         reward_fn: Union[str, Callable, list],
         reward_weights: list[float],
         sumo,
-        ped_wait_weight: float = DEAFULT_PED_WAIT_WEIGHT,
+        ped_wait_weight: float = DEFAULT_PED_WAIT_WEIGHT,
     ):
         """Initializes a TrafficSignal object.
 
@@ -186,6 +277,53 @@ class CustomTrafficSignal(TrafficSignal):
         if self.time_since_last_phase_change < self.min_green:
             return self.green_phase
 
+        # Check if pedestrians are currently crossing and need more time
+        # Prevent phase change if pedestrians won't have enough time to finish crossing
+        # Pedestrians can use both green AND yellow time to cross
+        if hasattr(self.env, 'pedestrian_crossing_time'):
+            # Calculate remaining green time (including potential extension beyond min_green)
+            # We check if we're still in the min_green period or if we've extended
+            time_in_green = self.time_since_last_phase_change
+            
+            # Calculate how much time pedestrians need to finish crossing
+            # Yellow_time is the buffer, so we just need crossing_time
+            required_time = self.env.pedestrian_crossing_time
+            
+            # Check if any pedestrians are currently on crossing lanes (actively crossing)
+            pedestrians_crossing = False
+            for lane in self.ped_lanes:
+                ped_ids = [pid for pid in self.sumo.person.getIDList() 
+                          if self.sumo.person.getLaneID(pid) == lane 
+                          and self.sumo.person.getSpeed(pid) > 0.1]
+                if ped_ids:
+                    pedestrians_crossing = True
+                    break
+            
+            # If pedestrians are crossing, ensure we have enough time remaining
+            # Total available time = remaining_green + yellow_time
+            # We need: remaining_green + yellow_time >= crossing_time + safety_margin
+            if pedestrians_crossing:
+                # Calculate remaining time before we could change phase
+                # If we're past min_green, we could change at next delta_time
+                if time_in_green >= self.min_green:
+                    # We could change phase soon (at next delta_time)
+                    # Remaining green = delta_time (time until next action)
+                    # Total available = delta_time + yellow_time
+                    remaining_green = self.delta_time
+                    total_available_time = remaining_green + self.yellow_time
+                    if total_available_time < required_time:
+                        # Not enough time (green + yellow), keep current phase
+                        return self.green_phase
+                else:
+                    # Still in min_green period
+                    # Remaining green = min_green - time_in_green
+                    # Total available = remaining_green + yellow_time
+                    remaining_green = self.min_green - time_in_green
+                    total_available_time = remaining_green + self.yellow_time
+                    if total_available_time < required_time:
+                        # Not enough time (green + yellow), keep current phase
+                        return self.green_phase
+
         green_idxs = self._get_green_phase_indices()
         best_a = self.green_phase
         best_p = -1e18
@@ -254,6 +392,21 @@ class CustomSumoEnvironment(SumoEnvironment):
         if not isinstance(self.reward_fn, dict):
             self.reward_fn = {ts: self.reward_fn for ts in self.ts_ids}
 
+        # Calculate pedestrian crossing parameters if not already done
+        if not hasattr(self, 'pedestrian_crossing_time'):
+            crossing_distance = get_crossing_distance_from_network(self._net)
+            pedestrian_speed = get_pedestrian_speed_from_route_file(self._route)
+            calculated_min_green = calculate_min_green_time(
+                crossing_distance,
+                pedestrian_speed,
+                PEDESTRIAN_SAFETY_MARGIN,
+                self.yellow_time
+            )
+            if self.min_green < calculated_min_green:
+                self.min_green = calculated_min_green
+            self.pedestrian_crossing_time = crossing_distance / pedestrian_speed
+            self.pedestrian_speed = pedestrian_speed
+
         self.traffic_signals = {
             ts: CustomTrafficSignal(
                 self,
@@ -275,6 +428,31 @@ class CustomSumoEnvironment(SumoEnvironment):
         """This method starts the simulation GUI but properly waits before setting 
         traci.gui.DEFAULT_VIEW for the simulation to have fully initialized 
         (added a sleep(delay)). This prevents a crash when too many sim objects."""
+        
+        # Calculate pedestrian crossing parameters
+        crossing_distance = get_crossing_distance_from_network(self._net)
+        pedestrian_speed = get_pedestrian_speed_from_route_file(self._route)
+        calculated_min_green = calculate_min_green_time(
+            crossing_distance, 
+            pedestrian_speed, 
+            PEDESTRIAN_SAFETY_MARGIN,
+            self.yellow_time
+        )
+        
+        # Update min_green if it was not set or is too small
+        if self.min_green < calculated_min_green:
+            print(f"Updating min_green from {self.min_green} to {calculated_min_green} "
+                  f"(based on crossing distance {crossing_distance}m, "
+                  f"pedestrian speed {pedestrian_speed}m/s)")
+            self.min_green = calculated_min_green
+        
+        # Calculate minimum crossing time for pedestrians
+        min_crossing_time = crossing_distance / pedestrian_speed
+        
+        # Store crossing time for use in pedestrian control
+        self.pedestrian_crossing_time = min_crossing_time
+        self.pedestrian_speed = pedestrian_speed
+        
         sumo_cmd = [
             self._sumo_binary,
             "-n",
@@ -290,6 +468,10 @@ class CustomSumoEnvironment(SumoEnvironment):
             # Added this to prevent pedestrian jams
             "--pedestrian.striping.jamtime", "600",
             "--pedestrian.striping.jamtime.crossing", "60",
+            # Ensure pedestrians respect traffic light timing
+            # The min_green time ensures pedestrians have enough time to cross
+            # Additional logic in select_max_pressure_action prevents phase changes
+            # when pedestrians are still crossing
         ]
         if self.begin_time > 0:
             sumo_cmd.append(f"-b {self.begin_time}")
@@ -353,8 +535,8 @@ class CustomObservationFunction(ObservationFunction):
         # Current traffic signal phase (one-hot encoded)
         phase_id = [1 if self.ts.green_phase == i else 0 for i in range(self.ts.num_green_phases)]
         
-        # Whether minimum green time has elapsed
-        min_green = [0 if self.ts.time_since_last_phase_change < self.ts.min_green + self.ts.yellow_time else 1]
+        # Whether minimum green time has elapsed (yellow_time is separate, not part of min_green)
+        min_green = [0 if self.ts.time_since_last_phase_change < self.ts.min_green else 1]
         
         # Current simulation time (normalized to [0,1] for 1 hour episode)
         current_time = [self.ts.env.sim_step / 3600.0]
@@ -416,6 +598,37 @@ def custom_reward_fn(ts: CustomTrafficSignal):
 CustomTrafficSignal.register_reward_fn(custom_reward_fn)
 """Register the custom environment, with custom observation, reward function, 
 and scenario files) to the Gymnasium API"""
+
+# Calculate default min_green based on pedestrian crossing requirements
+_default_crossing_distance = get_crossing_distance_from_network(NET_FILE_PATH)
+_default_pedestrian_speed = get_pedestrian_speed_from_route_file(ROUTE_FILE_PATH)
+_default_yellow_time = 3  # Default yellow time (will be overridden if specified in register)
+_default_min_green = calculate_min_green_time(
+    _default_crossing_distance,
+    _default_pedestrian_speed,
+    PEDESTRIAN_SAFETY_MARGIN,
+    _default_yellow_time
+)
+
+# Ensure delta_time is compatible with min_green
+# delta_time should be <= min_green and ideally a factor of min_green
+_default_delta_time = 5
+if _default_min_green > _default_delta_time:
+    # If min_green is larger, ensure delta_time divides evenly or is at least half
+    if _default_min_green % _default_delta_time != 0:
+        # Adjust delta_time to be compatible (use a value that works well)
+        # Keep delta_time at 5 if min_green is reasonable, otherwise adjust
+        if _default_min_green <= 15:
+            _default_delta_time = 5
+        elif _default_min_green <= 20:
+            _default_delta_time = 5  # Still works, just means actions happen every 5s
+        else:
+            _default_delta_time = max(5, _default_min_green // 3)  # Roughly 1/3 of min_green
+
+print(f"Pedestrian crossing parameters: distance={_default_crossing_distance}m, "
+      f"speed={_default_pedestrian_speed}m/s, min_green={_default_min_green}s, "
+      f"delta_time={_default_delta_time}s")
+
 register(
     id=CUSTOM_ENV_ID,
     entry_point="custom_env:CustomSumoEnvironment",
@@ -423,14 +636,15 @@ register(
         "single_agent": True,
         "net_file": NET_FILE_PATH,
         "route_file": ROUTE_FILE_PATH,
-        "reward_fn": custom_reward_fn,  # NEED TO IMPLEMENT ABOVE
-        "observation_class": CustomObservationFunction,  # NEED TO IMPLEMENT ABOVE
+        "reward_fn": custom_reward_fn,  
+        "observation_class": CustomObservationFunction,  
         "num_seconds":3600,
         
-        # Added these to ensure multiples of delta time (prevents crashes and jams)
-        "delta_time":5,
-        "yellow_time":3,
-        "min_green":5,
-        "max_green":30,
+        # Calculate these based on pedestrian crossing requirements
+        # min_green is calculated to ensure pedestrians have enough time to cross
+        "delta_time": _default_delta_time,
+        "yellow_time": 3,
+        "min_green": _default_min_green,  # Will be updated dynamically if route file has different speed
+        "max_green": 30,
     },
 )
