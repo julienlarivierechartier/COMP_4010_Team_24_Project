@@ -47,7 +47,7 @@ FLOW_CONFIG = {
 """Modified the config to have a wider range to promote learning diversified 
 patterns"""
 FLOW_CONFIG_WIDER = {
-    "car": {"min": 0.05, "max": 0.6, "sum": 2.0},
+    "car": {"min": 0.05, "max": 0.6, "sum": 1.6},
     "ped": {"min": 0.01, "max": 0.15, "sum": 0.4},
 }
 

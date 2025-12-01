@@ -375,7 +375,7 @@ def run(
                 
             # Train and log the metrics (always close the env)
             train_metrics = train_algorithm(algo, current_train_config, save_dir)
-            eval_metrics = evaluate_algorithm(algo, route_file_indices, route_file_indices)
+            eval_metrics = evaluate_algorithm(algo, current_train_config, route_file_indices)
             
             # Save JSON logs
             save_json(train_metrics, save_dir / "train.json")
