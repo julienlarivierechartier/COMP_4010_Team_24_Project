@@ -1,4 +1,4 @@
-# Team 24 Progress Report - November 15, 2025
+# Team 24 Progress Report - November 15th, 2025
 
 ## Member Contributions
 
