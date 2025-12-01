@@ -43,10 +43,8 @@ class QLearningAgent(BaseAlgorithm):
         self.obs_low = None
         self.obs_high = None
         self.obs_range = None
-
         # sparse Q-table: only store visited states
         self.q_table: dict[tuple, np.ndarray] = {}
-
 
     # helpers
     def _discretize(self, obs: np.ndarray) -> tuple:
@@ -142,11 +140,10 @@ class QLearningAgent(BaseAlgorithm):
         self.env = env 
         self.obs_low = np.array(env.observation_space.low, dtype=np.float32)
         self.obs_high = np.array(env.observation_space.high, dtype=np.float32)
-
-        # simple heuristic fix: if env says [0,1000] but obs 实际在 [0,1]，就按 [0,1] 处理
+        # simple heuristic fix: if env says [0,1000] but obs actually in [0,1], then do it with [0,1]
         if np.all(self.obs_low == 0.0) and np.all(self.obs_high >= 10.0):
             self.obs_high = np.ones_like(self.obs_high, dtype=np.float32)
-
+            
         self.obs_range = np.where(
             (self.obs_high - self.obs_low) == 0,
             1e-8,
@@ -157,11 +154,8 @@ class QLearningAgent(BaseAlgorithm):
 # ------------------------------------
 # Testing the training independently
 # ------------------------------------
-
-
 def train(agent: BaseAlgorithm, env: gym.Env, episodes=1000):
     # discretization sanity check
-    # （如果你完全不想要这个注释也可以删掉，但它本身不会输出东西）
     for ep in range(episodes):
         obs, _ = env.reset()
         agent.reset()
@@ -171,7 +165,6 @@ def train(agent: BaseAlgorithm, env: gym.Env, episodes=1000):
         while not done:
             action = agent.select_action(obs, training=True)
             next_obs, reward, terminated, truncated, _ = env.step(action)
-
             agent.train_step((obs, action, reward, next_obs, terminated or truncated))
 
             obs = next_obs
