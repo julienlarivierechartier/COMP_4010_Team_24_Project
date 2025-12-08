@@ -30,7 +30,7 @@ python demo.py
 ```
 
 ## Run the Result Generation Script
-This performs grid search for each algorithm defined in `ALGORITHMS` over all hyperparamters combinations defined in `PARAM_GRID`. The results will be stored under `Results/{timestamp}/` and will organized under subdirectories with names corresponding to  algorithm and hyperparameter combinations. Example `Results\20251201_005709\ppo_lr_0.0001_gamma_0.99_clip_0.2_gae_lambda_0.95_K_8_entropy_coef_0.01`. Each subsfolder contains the training summary, evaluation summary as well as algorithm checkpoint.
+This performs grid search for each algorithm defined in `ALGORITHMS` over all hyperparamters combinations defined in `PARAM_GRID`. The results will be stored under `Results/{timestamp}/` and will be organized under subdirectories with names corresponding to  algorithm and hyperparameter combinations. Example `Results\20251201_005709\ppo_lr_0.0001_gamma_0.99_clip_0.2_gae_lambda_0.95_K_8_entropy_coef_0.01`. Each subsfolder contains the training summary, evaluation summary as well as algorithm checkpoint.
 
 ```shell
 python run_experiments.py
