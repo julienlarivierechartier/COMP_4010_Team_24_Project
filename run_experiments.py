@@ -86,70 +86,7 @@ PARAM_GRID = {
     }
 }
 
-# """Redifinition with minimal config (just for internal testing without deleting the 
-# above ones). Comment all the ones you dont want to test and keep the one you need."""
-""" ALGORITHMS = {
-    "max_pressure": MaxPressureAgent,
-  
-}
-PARAM_GRID = {
-    "max_pressure": {
-        "ped_wait_weight": [1]
-    },
-} """
 
-# ALGORITHMS = {
-#     "random": RandomAgent,
-# }
-# PARAM_GRID = {
-#     "random": {
-#     }
-# }
-
-# ALGORITHMS = {
-#     "fixed_time": FixedTimeAgent,
-# }
-# PARAM_GRID = {
-#     "fixed_time": {
-#     },
-# }
-
-# ALGORITHMS = {
-#     "ppo": PPOAgent,
-# }
-# PARAM_GRID = {
-#     "ppo": {
-#     }
-# }
-
-""" ALGORITHMS = {
-    "q_learning": QLearningAgent,
-}
-PARAM_GRID = {
-    "q_learning": {
-        "lr": [0.001],
-        "gamma": [0.95],
-        "epsilon": [1.0],
-        "eps_decay": [0.995],
-        "eps_min": [0.01],
-        "bins": [8],
-    },
-}
-
-ALGORITHMS = {
-    "dqn": DQNAgent,
-}
-PARAM_GRID = {
-    "dqn": {
-       "lr": [1e-3],
-       "gamma": [0.95],
-       "epsilon_start": [1.0],
-       "epsilon_min": [0.01],
-       "epsilon_decay": [0.995],
-       "batch_size": [64, 128],
-       "target_update_freq": [5, 10],
-   },
-} """
 # Training parameters
 TRAINING_CONFIG = {
     "train_episodes": 100,
@@ -159,12 +96,6 @@ TRAINING_CONFIG = {
     #"route_file_dir": ASSYMETRIC_ROUTES_DIR,
 }
 
-# Quick dict to check if algo completes train and eval loops
-""" TRAINING_CONFIG = {
-    "train_episodes": 1,
-    "log_interval": 1,
-    "eval_episodes": 1
-} """
 
 # Where to store the results
 RESULTS_ROOT = Path("Results")

@@ -6,8 +6,8 @@ gymnasium>=0.29.0
 numpy>=1.24.0
 pandas>=2.0.0
 
-# SUMO-RL (Install from GitHub or PyPI)
-sumo-rl>=1.4.3
+# SUMO-RL (Install from GitHub)
+sumo-rl @ git+https://github.com/LucasAlegre/sumo-rl.git
 
 # SUMO Integration (usually installed with SUMO itself)
 traci>=1.15.0
